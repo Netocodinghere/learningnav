@@ -10,15 +10,6 @@ const Hero = () => {
   <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
 
   {/* Random Cartoon Images */}
-    <img
-      src="/pen.png"
-      alt="Floating Kid"
-      className={`absolute object-cover animate-floating z-0 pointer-events-none`}
-      style={{
-        bottom: '1%',
-        left: '1%',
-      }}
-    />
 
 
   {/* Hero Content */}
