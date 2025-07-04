@@ -80,7 +80,7 @@ export default function StudyPage() {
   };
 
   return (
-    <div className=" overflow-y-auto mx-auto px-6 min-h-screen w-full pt-32  ">
+    <div className=" overflow-y-auto mx-auto px-6 min-h-screen w-full  ">
       <div className="flex justify-between items-center w-full mb-8">
         <h1 className="lg:text-3xl text-white text-2xl font-bold">Study Dashboard</h1>
         <button

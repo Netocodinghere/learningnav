@@ -48,12 +48,12 @@ export default function StudyList() {
           <div className="text-sm text-gray-200 text-left sm:text-right">
             <span className="font-semibold">{study.flashcardCount}</span> flashcards
           </div>
-          <button
-            onClick={() => console.log(`View study ${study.id}`)}
+          <a
+           href={`/study/${study.id}`}
             className="w-full sm:w-auto px-4 py-2 text-sm text-blue-700 bg-white/90 hover:bg-white text-black rounded-md transition-colors"
           >
             View Study
-          </button>
+          </a>
         </div>
       </div>
     ))}
