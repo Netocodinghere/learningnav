@@ -21,8 +21,8 @@ export default function StudyPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white  sm:p-8">
-      <div className="max-w-5xl mx-auto space-y-10">
+    <div className="min-h-screen bg-gray-950 text-white   sm:p-8">
+      <div className="max-w-5xl mx-auto space-y-10 pt-32">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-2xl font-bold">📚 Study Session</h1>

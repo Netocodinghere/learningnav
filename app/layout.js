@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`bg-black bg-gradient-to-br from-blue-900 via-black to-cyan-900 grid gap-32`}
+        className={`bg-black bg-gradient-to-br from-blue-900 via-black to-cyan-900 grid `}
       >
         <Nav />
         {children}
