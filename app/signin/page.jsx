@@ -17,8 +17,9 @@ const SignUp = () => {
     console.log('Confirm Password:', confirmPassword);
   };
 
-  return (<div className="min-h-screen bg-gradient-to-br from-blue-900 via-black to-cyan-900 flex items-center justify-center px-4 pt-20">
-  <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 flex flex-col items-center border border-white/20">
+  return (
+  <div className="min-h-screen bg-gradient-to-br from-blue-900 via-black to-cyan-900 flex items-center justify-center px-4 pt-20">
+  <div className="w-full max-w-md bg-black/80 backdrop-blur-md rounded-2xl shadow-2xl p-8 flex flex-col items-center border border-white/20">
     <div className="mb-6">
       <div className="relative w-32 h-32 mx-auto drop-shadow-lg">
         <img src="https://th.bing.com/th/id/OIP.noXdXMYsa_Oku-yLfFgGcwHaE7?rs=1&pid=ImgDetMain&cb=idpwebp2&o=7&rm=3" alt="Pencil Holder" layout="fill" objectFit="contain" className="rounded-full bg-white/30" />
