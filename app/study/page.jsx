@@ -80,14 +80,14 @@ export default function StudyPage() {
   };
 
   return (
-    <div className="container min-h-screen overflow-y-auto mx-auto px-4 py-28 ">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl text-white font-bold">Study Dashboard</h1>
+    <div className=" overflow-y-auto mx-auto px-6 min-h-screen w-full pt-32  ">
+      <div className="flex justify-between items-center w-full mb-8">
+        <h1 className="lg:text-3xl text-white text-2xl font-bold">Study Dashboard</h1>
         <button
           onClick={() => setModalOpen(true)}
           className="bg-blue-700 text-white lg:px-6 px-2 py-2 rounded-md hover:bg-blue-800 transition-colors"
         >
-          Create New Study +
+          New Study +
         </button>
       </div>
 
