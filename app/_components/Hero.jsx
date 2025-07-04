@@ -22,7 +22,7 @@ const Hero = () => {
       Generate flashcards, quizzes, and study plans instantly. Learn smarter, not harder.
     </p>
 
-    <div className="mt-8 flex flex-col sm:flex-row gap-4">
+    <div className="lg:mt-8 mt-4 flex gap-2 lg:gap-4">
       <a
         href="#"
         className="px-6 py-3 bg-blue-700 inline-flex items-center justify-center gap-1 text-white font-semibold rounded-md shadow-md hover:bg-blue-500 transition"

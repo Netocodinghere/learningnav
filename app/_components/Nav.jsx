@@ -1,7 +1,8 @@
 
 const Nav = () => {
   return (
-    <div className="flex fixed z-20 top-0 justify-between w-full   p-8 backdrop-sm border-0 border-dashed border-b-black  ">
+    <div className="w-full items-center flex justify-center ">
+    <div className="flex fixed z-20 top-0 justify-between lg:w-3/4 w-[95%] rounded-full my-4   p-8 backdrop-sm lg:bg-white/10 bg-black/60   ">
     <span className="font-extrabold text-xl self-center inline-flex  text-gray-50 lg:text-3xl"> <span>LearnNav</span>     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 self-start">
   <path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.948 49.948 0 0 0-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 0 1-.707 0A50.88 50.88 0 0 0 7.5 12.173v-.224c0-.131.067-.248.172-.311a54.615 54.615 0 0 1 4.653-2.52.75.75 0 0 0-.65-1.352 56.123 56.123 0 0 0-4.78 2.589 1.858 1.858 0 0 0-.859 1.228 49.803 49.803 0 0 0-4.634-1.527.75.75 0 0 1-.231-1.337A60.653 60.653 0 0 1 11.7 2.805Z" />
@@ -10,7 +11,7 @@ const Nav = () => {
 </svg>
 </span>
     <div className="flex gap-2 text-sm lg:text-lg items-center justify-center justify-self-end ">
-      <a className="p-1  text-white bg-transparent hover:underline   font-semibold" href="">Sign In</a>
+      <a className="p-1  text-white bg-transparent hover:underline   font-semibold" href="/signin">Sign In</a>
       <a className="p-1 lg:p-2 inline-flex bg-blue-600 hover:bg-blue-500 hover:p-2 active:p-2 active:bg-blue-500 text-white font-semibold rounded-sm shadow-lg" href="">
         <span>Get Started</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 self-center">
   <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm4.28 10.28a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72H8.25a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3Z" clipRule="evenodd" />
@@ -19,6 +20,7 @@ const Nav = () => {
  
       </a>
       </div>   
+      </div>
       </div>
   )
 }
