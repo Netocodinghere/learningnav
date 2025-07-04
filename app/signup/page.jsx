@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { FcGoogle } from 'react-icons/fc';
 
-const SignIn = () => {
+const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -22,7 +22,7 @@ const SignIn = () => {
   <div className="w-full max-w-md bg-black/80 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col items-center border border-white/20 mx-auto">
   
   <h1 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-3 drop-shadow">
-    Welccome <span className="text-cyan-400">Back</span>
+    Join <span className="text-cyan-400">Now</span>
   </h1>
 
   <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
@@ -38,6 +38,13 @@ const SignIn = () => {
       placeholder="Password"
       value={password}
       onChange={(e) => setPassword(e.target.value)}
+      className="px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
+    />
+    <input
+      type="password"
+      placeholder="Confirm Password"
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
       className="px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
     />
     <button
@@ -60,4 +67,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;
