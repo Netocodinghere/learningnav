@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hydralerne/youtube-api": "^1.1.5",
     "next": "15.3.3",
     "openai": "^5.8.3",
     "react": "^19.0.0",
