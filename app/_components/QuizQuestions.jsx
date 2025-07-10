@@ -1,17 +1,21 @@
 
 
+'use client';
+
 import { useState } from 'react';
+import Question from './Question';
 
 export default function QuizQuestions() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState('right');
 
-  // Mock quiz data
+  // Mock quiz data with different question types
   const quiz = {
     title: "Introduction to React Fundamentals",
     questions: [
       {
         id: 1,
+        type: 'mcq',
         question: "What is React?",
         options: [
           "A JavaScript library for building user interfaces",
@@ -23,6 +27,19 @@ export default function QuizQuestions() {
       },
       {
         id: 2,
+        type: 'fill-in-blank',
+        question: "Complete this statement: React was created by _______.",
+        correctAnswer: "Facebook"
+      },
+      {
+        id: 3,
+        type: 'open-ended',
+        question: "Explain what a React component is and why it's useful.",
+        correctAnswer: null // Open-ended questions don't have specific correct answers
+      },
+      {
+        id: 4,
+        type: 'mcq',
         question: "What is JSX?",
         options: [
           "A JavaScript XML parser",
@@ -31,22 +48,11 @@ export default function QuizQuestions() {
           "A React component"
         ],
         correctAnswer: 1
-      },
-      {
-        id: 3,
-        question: "What is a React component?",
-        options: [
-          "A CSS file",
-          "A database table",
-          "A reusable piece of UI",
-          "A JavaScript variable"
-        ],
-        correctAnswer: 2
       }
     ]
   };
 
-  const handleAnswerSelect = (selectedIndex) => {
+  const handleAnswerSubmit = (answer, isCorrect) => {
     setSlideDirection('left');
     
     // Simulate a brief delay for the sliding animation
@@ -77,24 +83,13 @@ export default function QuizQuestions() {
           ${slideDirection === 'left' ? '-translate-x-full opacity-0' : 
             slideDirection === 'right' ? 'translate-x-0 opacity-100' : ''}`}
       >
-        <h2 className="text-xl font-semibold text-white mb-4">
-          {currentQuestion.question}
-        </h2>
-
-        {/* Answer Options */}
-        <div className="space-y-3">
-          {currentQuestion.options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => handleAnswerSelect(index)}
-              className="w-full text-left p-4 rounded-lg bg-white/10 hover:bg-white/20
-                transition-all duration-200 text-white hover:transform hover:scale-102"
-            >
-              <span className="font-medium">{String.fromCharCode(65 + index)}. </span>
-              {option}
-            </button>
-          ))}
-        </div>
+        <Question
+          type={currentQuestion.type}
+          question={currentQuestion.question}
+          options={currentQuestion.options}
+          correctAnswer={currentQuestion.correctAnswer}
+          onAnswer={handleAnswerSubmit}
+        />
       </div>
 
       {/* Progress Bar */}
