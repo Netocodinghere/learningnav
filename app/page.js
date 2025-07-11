@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Hero from "./_components/Hero";
 import Dashboard from "./_components/Dashboard";
 export default function Home() {
-  const [auth,setAuth] = useState(false)
+  const [auth,setAuth] = useState(true)
   const [user,setUser]=useState(null)
   useEffect(()=>{
     
