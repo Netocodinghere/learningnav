@@ -8,15 +8,81 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSubmitting, setIsSubmitting]=useState(false)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your sign-up logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
+     
+const handleSubmit =async () => {
+  setIsSubmitting(true);
+  const data = {
+    email: email,
+    password: password,
+    confirmpassword:confirmPassword
   };
 
+  if(data.password !== data.confirmpassword) {
+    toast.error('Passwords do not match');
+    return;
+  }
+
+  if(email.trim()==""){
+      toast.error('Enter Email')
+      return
+
+  }
+
+  
+  if(password.trim()==""){
+      toast.error('Enter Password')
+      return
+
+  }
+
+  
+  try{
+      const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      if (result.error) {
+          throw new Error(result.error);
+      }
+
+      setIsSubmitting(false);
+      if(window  != 'undefined'){
+          if(!result.user.user_metadata.email_verified){
+              window.location.href = '/confirmation';
+          }else{
+              window.location.href = '/signin';
+          }
+      }
+  } catch (error) {
+      setIsSubmitting(false);
+      if(error.message=="user_already_exists"){
+          toast.error('User already exists. Please login instead.');
+          return;
+      }
+      if(error.message=="weak_password"){
+          toast.error('Password is too weak. Please choose a stronger password.');
+          return;
+      }
+      console.log('Error during signup:', error);
+      toast.error('Signup failed. Please try again.');
+  }
+
+
+  
+};
+
+  
   return (
   <div className="min-h-screen bg-gradient-to-br from-blue-900 via-black to-cyan-900 flex items-center justify-center px-4 pt-20">
   <div className="w-full max-w-md bg-black/80 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col items-center border border-white/20 mx-auto">
@@ -48,7 +114,8 @@ const SignUp = () => {
       className="px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
     />
     <button
-      type="submit"
+    type='button'
+       onClick={handleSubmit}
       className="w-full py-3 mt-2 rounded-lg bg-cyan-500 text-white font-bold shadow hover:bg-cyan-400 transition"
     >
       Sign Up →

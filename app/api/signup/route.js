@@ -1,4 +1,4 @@
-import { signUp } from '@/lib/auth';
+
 import { NextResponse } from 'next/server';
 import { createClient } from "@supabase/supabase-js";
 
@@ -8,9 +8,9 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.
 
 export async function POST(req) {
         const data = await req.json();
-        const { email, password, name }=data
+        const { email, password}=data
 
-        if (!email || !password || !name) {
+        if (!email || !password ) {
             return NextResponse.json({ error: 'Email, password, and name are required' }, { status: 400 });
         }
 
@@ -18,10 +18,8 @@ export async function POST(req) {
             email,
             password,
             options: {
-                emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard`,
-                data: {
-                    name: name
-                }
+                emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}`,
+              
             }
         });
 

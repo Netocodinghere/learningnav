@@ -1,21 +1,5 @@
-import { signIn } from '@/lib/auth';
 import { NextResponse } from 'next/server';
-import { handleAuthError } from '../../_lib/errorMessages';
 import { createClient } from "@supabase/supabase-js";
-
-
-const allowedOrigin = '*';
-
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': allowedOrigin,
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
-}
 
 
 
@@ -39,7 +23,7 @@ export async function POST(req) {
             password: password,
         });
 
-        if (error) { // Remove __isAuthError check
+        if (error) { 
         const { title, message } = {title:'Error', message:error.message || 'An unexpected error occurred'};
             return NextResponse.json({ error: { title, message } }, { status: 400 });
         }
