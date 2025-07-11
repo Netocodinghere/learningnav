@@ -54,6 +54,8 @@ const SignIn = () => {
       Sign up with Google
     </button>
   </div>
+  
+  <span className="text-white text-md mt-3 ">Don't Have An Account? <a className='text-cyan-400 font-bold hover:underline' href="/signup">Sign Up</a></span>
 </div>
 
 </div>
