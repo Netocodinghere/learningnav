@@ -61,6 +61,8 @@ const SignUp = () => {
       Sign up with Google
     </button>
   </div>
+
+  <span className="text-white text-md mt-3 ">Already Have An Account? <a className='text-cyan-400 font-bold hover:underline' href="/signin">Sign In</a></span>
 </div>
 
 </div>
