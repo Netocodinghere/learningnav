@@ -7,14 +7,50 @@ import { FcGoogle } from 'react-icons/fc';
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your sign-up logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
+    setError(null);
+    setIsProcessing(true);
+
+    const req= await fetch('/api/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password
+      }),
+    });
+
+    const { user, session,user_metadata, error } =  await req.json();
+
+    setIsProcessing(false);
+
+    if (error) {
+      setError(error.message);
+      setToastMessage({ message: error.message, type: "error" });
+         if(window  != 'undefined' && error.message==="Email not confirmed"){
+            window.location.href = '/confirmation';
+        }
+    } else {
+      if (!user.email_confirmed_at) {
+        router.push("/confirmation");
+      } else {
+
+        if(localStorage !== null){
+          localStorage.setItem("sb-zfrlcufqcojjrlsviqcj-auth-token",JSON.stringify(session))
+        
+        }  
+        if(window  != 'undefined'){
+            window.location.href = '/';
+        }
+      }
+    }
   };
 
   return (
@@ -22,7 +58,7 @@ const SignIn = () => {
   <div className="w-full max-w-md bg-black/80 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col items-center border border-white/20 mx-auto">
   
   <h1 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-3 drop-shadow">
-    Welccome <span className="text-cyan-400">Back</span>
+    Welcome <span className="text-cyan-400">Back</span>
   </h1>
 
   <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
@@ -44,7 +80,7 @@ const SignIn = () => {
       type="submit"
       className="w-full py-3 mt-2 rounded-lg bg-cyan-500 text-white font-bold shadow hover:bg-cyan-400 transition"
     >
-      Sign Up →
+      Sign In →
     </button>
   </form>
 
