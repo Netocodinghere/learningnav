@@ -24,7 +24,6 @@ const Nav = () => {
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
-    // Optional: redirect
     window.location.href = '/signin'
   }
 
