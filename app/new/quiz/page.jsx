@@ -35,7 +35,7 @@ export default function NewQuiz() {
   }
 
   return (
-    <div className="max-full mx-auto p-6 pt-38 h-screen space-y-8">
+    <div className="max-full mx-auto w-full lg:p-16 p-8 pt-38 lg:pt-38 h-screen overflow-y-auto space-y-8">
       <h1 className="text-3xl font-bold text-white text-center">Generate a New Quiz</h1>
       
       {/* Input Method Selection */}
@@ -133,14 +133,14 @@ export default function NewQuiz() {
             required
           />
         )}
-
+ <div className="w-full justify-center flex items-center">
         <button
           type="submit"
           disabled={isGenerating}
-          className="w-full py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-6 self-center py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isGenerating ? 'Generating Quiz...' : 'Generate Quiz'}
-        </button>
+        </button></div>
       </form>
     </div>
   );
