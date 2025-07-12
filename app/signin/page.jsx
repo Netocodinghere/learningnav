@@ -1,8 +1,37 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { FcGoogle } from 'react-icons/fc';
+
+
+const Toast = ({ message, type, duration = 3000, onClose }) => {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false);
+      if (onClose) {
+        onClose();
+      }
+    }, duration);
+
+    return () => clearTimeout(timer);
+  }, [duration, onClose]);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      className={`fixed bottom-4 right-4 p-4 rounded-md shadow-lg text-white ${
+        type === "success" ? "bg-green-500" : "bg-red-500"
+      }`}
+    >
+      {message}
+    </div>
+  );
+};
+
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +39,28 @@ const SignIn = () => {
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [user, setUser] = useState(null);
+
+ 
+  useEffect(()=>{
+        const fetchUser = async () => {
+    
+          const { data: { session } } = await supabase.auth.getSession()
+          setUser(session?.user || null)
+         
+          if(session?.user) {
+          if(window  != 'undefined'){
+            window.location.href = '/'
+          }
+        }
+          
+        }
+
+        fetchUser()
+      
+      },[])
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,7 +144,13 @@ const SignIn = () => {
   
   <span className="text-white text-md mt-3 ">Don't Have An Account? <a className='text-cyan-400 font-bold hover:underline' href="/signup">Sign Up</a></span>
 </div>
-
+{toastMessage && (
+        <Toast
+          message={toastMessage.message}
+          type={toastMessage.type}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
 </div>
   );
 };

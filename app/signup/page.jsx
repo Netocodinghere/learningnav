@@ -4,6 +4,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { FcGoogle } from 'react-icons/fc';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -132,6 +135,7 @@ const handleSubmit =async () => {
   <span className="text-white text-md mt-3 ">Already Have An Account? <a className='text-cyan-400 font-bold hover:underline' href="/signin">Sign In</a></span>
 </div>
 
+<ToastContainer/>
 </div>
   );
 };
