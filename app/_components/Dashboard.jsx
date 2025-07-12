@@ -104,7 +104,7 @@ export default function Dashboard() {
           title="Take a Quiz"
           description={`You've completed ${userData.metrics.quizzesTaken} quizzes`}
           icon="✍️"
-          onClick={() => console.log('Quiz clicked')}
+          onClick={() => window != "undefined"? window.location.href="/new/quiz":""}
         />
         <ActionButton
           title="Make a Cheatsheet"

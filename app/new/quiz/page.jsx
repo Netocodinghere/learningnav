@@ -8,6 +8,8 @@ export default function NewQuiz() {
   const [content, setContent] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [file, setFile] = useState(null);
+  const [numQuestions, setNumQuestions] = useState(10);
+  const [difficulty, setDifficulty] = useState('medium');
   const [isGenerating, setIsGenerating] = useState(false);
   const [quizGenerated, setQuizGenerated] = useState(false);
 
@@ -56,6 +58,37 @@ export default function NewQuiz() {
         >
           YouTube Video
         </button>
+      </div>
+
+      {/* Quiz Configuration */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Number of Questions */}
+        <div className="space-y-2">
+          <label className="block text-white font-medium">Number of Questions</label>
+          <input
+            type="number"
+            min="1"
+            max="25"
+            value={numQuestions}
+            onChange={(e) => setNumQuestions(Math.min(25, Math.max(1, parseInt(e.target.value) || 1)))}
+            className="w-full bg-white/10 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p className="text-gray-400 text-sm">Maximum 25 questions</p>
+        </div>
+
+        {/* Difficulty Selector */}
+        <div className="space-y-2">
+          <label className="block text-white font-medium">Difficulty Level</label>
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            className="w-full bg-white/10 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="easy" className="bg-gray-800">Easy</option>
+            <option value="medium" className="bg-gray-800">Medium</option>
+            <option value="hard" className="bg-gray-800">Hard</option>
+          </select>
+        </div>
       </div>
 
       {/* Input Form */}
