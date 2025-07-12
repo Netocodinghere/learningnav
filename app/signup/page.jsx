@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from 'react';
-import Head from 'next/head';
-import Image from 'next/image';
 import { FcGoogle } from 'react-icons/fc';
 import { signInWithGoogle } from '@/lib/auth';
 import { ToastContainer, toast } from 'react-toastify';

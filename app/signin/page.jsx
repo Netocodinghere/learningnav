@@ -1,9 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Image from 'next/image';
 import { FcGoogle } from 'react-icons/fc';
 
+import { signInWithGoogle } from '@/lib/auth';
 
 const Toast = ({ message, type, duration = 3000, onClose }) => {
   const [visible, setVisible] = useState(true);
@@ -136,7 +135,7 @@ const SignIn = () => {
   </form>
 
   <div className="mt-6 w-full">
-    <button className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-white/90 text-black font-semibold shadow hover:bg-white transition">
+    <button onClick={signInWithGoogle} className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-white/90 text-black font-semibold shadow hover:bg-white transition">
       <FcGoogle size={22} />
       Sign up with Google
     </button>
