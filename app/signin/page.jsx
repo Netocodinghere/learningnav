@@ -94,7 +94,7 @@ const SignIn = () => {
       } else {
 
         if(localStorage !== null){
-          localStorage.setItem("sb-zfrlcufqcojjrlsviqcj-auth-token",JSON.stringify(session))
+          localStorage.setItem("sb-vzxemrgatzjclwbktzyx-auth-token",JSON.stringify(session))
         
         }  
         if(window  != 'undefined'){
