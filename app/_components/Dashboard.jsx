@@ -36,8 +36,7 @@ function ActionButton({ title, description, icon, onClick }) {
 export default function Dashboard() {
   // Mock user data - this would come from your authentication system
   const userData = {
-    name: 'John',
-    metrics: {
+  metrics: {
       studiesCreated: 15,
       quizzesTaken: 8,
       flashcardsGenerated: 120,
@@ -82,7 +81,7 @@ export default function Dashboard() {
       {/* Welcome Section */}
       <div className="flex items-center justify-between bg-white/5 backdrop-blur p-6 rounded-lg">
         <h1 className="text-2xl font-bold text-white">
-          Welcome back, {userData.name}! 👋
+          Welcome back {userData?.name??''}! 👋
         </h1>
       </div>
 
