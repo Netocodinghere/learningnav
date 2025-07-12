@@ -8,21 +8,17 @@ const Nav = () => {
 
   // Check auth state on mount
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-    }
+    const fetchUser = async () => {
 
-    getUser()
+      const { data: { session } } = await supabase.auth.getSession()
 
-    // Optional: Listen for auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null)
-    })
-
-    return () => {
-      listener?.subscription?.unsubscribe()
+     
+      
+ 
     }
+    fetchUser()
+
   }, [])
 
   const handleSignOut = async () => {
