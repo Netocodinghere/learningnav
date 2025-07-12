@@ -4,3 +4,5 @@ langchain
 openai
 pypdf
 python-docx
+langchain-community
+pydantic
