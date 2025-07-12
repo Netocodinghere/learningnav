@@ -9,7 +9,7 @@ from langchain.output_parsers.json import SimpleJsonOutputParser
 import os
 import tempfile
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List, Dict, Union
 
 class QuizQuestion(BaseModel):
     question: str

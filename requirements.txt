@@ -6,3 +6,4 @@ pypdf
 python-docx
 langchain-community
 pydantic
+python-multipart
