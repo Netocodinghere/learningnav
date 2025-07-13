@@ -44,45 +44,57 @@ function extractJsonArray(raw: string): string {
   }
   
 
-const generatePrompt = (difficulty: string, number: number) => `
-Generate exactly ${number} quiz questions from the following content with ${difficulty} difficulty level.
-
-Create questions in a 3:2:1 ratio for multiple-choice, single-choice, and open-ended questions respectively.
-
-For ${difficulty} difficulty:
-- Easy: Focus on basic facts, definitions, and simple concepts
-- Medium: Include analysis, application, and connections between concepts  
-- Hard: Require synthesis, evaluation, and complex reasoning
-
-For multiple-choice and single-choice questions:
-- Provide the question text
-- Provide 4 answer options labeled A, B, C, and D
-- Mark the correct answer(s) in the "answer" field
-- For multiple-choice: "answer" should be an array of correct options
-- For single-choice: "answer" should be a single option string
-
-For open-ended questions:
-- Provide only the question text
-- Do NOT include "options" or "answer" fields
-
-Return format:
-{
-  "question": "question text",
-  "options": {
-    "A": "option text",
-    "B": "option text", 
-    "C": "option text",
-    "D": "option text"
-  },
-  "answer": ["A", "C"] // or "B" for single choice, or omit for open-ended
-}
-
-Content:
-{text}
-
-Return only a valid JSON array of question objects.
-`;
-
+  const generatePrompt = (difficulty: string, number: number) => `
+  Generate exactly ${number} quiz questions from the following content with ${difficulty} difficulty level.
+  
+  Create questions for:
+  - Single-choice
+  - Open-ended (with answers)
+  - Multiple-choice
+  
+  Use a balanced ratio (e.g. 2:1:1 or close to that) for the three types.
+  
+  ### Difficulty Guide:
+  - Easy: Basic facts, definitions, simple recall
+  - Medium: Application, analysis, concept relationships
+  - Hard: Synthesis, evaluation, complex reasoning
+  
+  ### For each question type:
+  
+  **Single-choice and Multiple-choice**
+  - "type": either "single-choice" or "multiple-choice"
+  - "question": string
+  - "options": an object with 4 labeled options A-D
+  - "answer":
+    - For single-choice: a string (e.g., "A")
+    - For multiple-choice: an array of strings (e.g., ["A", "C"])
+  
+  **Open-ended**
+  - "type": "open-ended"
+  - "question": string
+  - "answer": string (a concise, correct answer to the question)
+  
+  Return only a valid JSON array of question objects. Do not include explanations or extra text.
+  
+  ### JSON format:
+  [
+    {
+      "question": "question text",
+      "type": "single-choice" | "multiple-choice" | "open-ended",
+      "options": {
+        "A": "option text",
+        "B": "option text",
+        "C": "option text",
+        "D": "option text"
+      },
+      "answer": ["B"] | ["A", "C"] | "The correct open-ended answer"
+    }
+  ]
+  
+  ### Content:
+  {text}
+  `;
+  
 // Helper function to load and chunk documents
 async function loadAndChunk(filePath: string, fileType: string) {
   let loader;
