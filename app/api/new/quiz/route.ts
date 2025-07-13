@@ -17,15 +17,16 @@ const corsHeaders = {
 };
 
 interface QuizQuestion {
-  question: string;
-  options?: {
-    A: string;
-    B: string;
-    C: string;
-    D: string;
-  };
-  answer?: string | string[];
-}
+    question: string;
+    type: 'single-choice' | 'multiple-choice' | 'open-ended' | 'fill-in-the-blank';
+    options?: {
+      A: string;
+      B: string;
+      C: string;
+      D: string;
+    };
+    answer: string | string[];
+  }
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -43,58 +44,80 @@ function extractJsonArray(raw: string): string {
     return raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
   }
   
-
   const generatePrompt = (difficulty: string, number: number) => `
   Generate exactly ${number} quiz questions from the following content with ${difficulty} difficulty level.
   
-  Create questions for:
+  Create a balanced mix of the following question types:
   - Single-choice
-  - Open-ended (with answers)
   - Multiple-choice
+  - Open-ended (with answers)
+  - Fill-in-the-blank (with answers)
   
-  Use a balanced ratio (e.g. 2:1:1 or close to that) for the three types.
+  Aim for a roughly even distribution (e.g. 2:1:1:1 or similar, based on the total number).
+  
+  ---
   
   ### Difficulty Guide:
   - Easy: Basic facts, definitions, simple recall
-  - Medium: Application, analysis, concept relationships
+  - Medium: Application, analysis, relationships between concepts
   - Hard: Synthesis, evaluation, complex reasoning
   
-  ### For each question type:
+  ---
   
-  **Single-choice and Multiple-choice**
-  - "type": either "single-choice" or "multiple-choice"
+  ### Question Type Definitions:
+  
+  **Single-choice**
+  - "type": "single-choice"
   - "question": string
-  - "options": an object with 4 labeled options A-D
-  - "answer":
-    - For single-choice: a string (e.g., "A")
-    - For multiple-choice: an array of strings (e.g., ["A", "C"])
+  - "options": [ A, B, C, D ]
+  - "answer": string (e.g., "A")
+  
+  **Multiple-choice**
+  - "type": "multiple-choice"
+  - "question": string
+  - "options": [ A, B, C, D ]
+  - "answer": array of correct options (e.g., ["A", "C"])
   
   **Open-ended**
   - "type": "open-ended"
   - "question": string
-  - "answer": string (a concise, correct answer to the question)
+  - "answer": string (concise correct response)
   
-  Return only a valid JSON array of question objects. Do not include explanations or extra text.
+  **Fill-in-the-blank**
+  - "type": "fill-in-the-blank"
+  - "question": string — must include a blank (e.g., "The capital of France is _____")
+  - "answer": string (the correct word/phrase to complete the sentence)
   
-  ### JSON format:
+  ---
+  
+  ### Output Format:
+  Return only a valid JSON array of question objects. No explanations or extra text.
+  Example:
   [
     {
-      "question": "question text",
-      "type": "single-choice" | "multiple-choice" | "open-ended",
-      "options": {
-        "A": "option text",
-        "B": "option text",
-        "C": "option text",
-        "D": "option text"
-      },
-      "answer": ["B"] | ["A", "C"] | "The correct open-ended answer"
+      "question": "What is the capital of France?",
+      "type": "single-choice",
+      "options": [
+        "A": "Paris",
+        "B": "Berlin",
+        "C": "Madrid",
+        "D": "Rome"
+],
+      "answer": "A"
+    },
+    {
+      "question": "The boiling point of water is _____ degrees Celsius.",
+      "type": "fill-in-the-blank",
+      "answer": "100"
     }
   ]
+  
+  ---
   
   ### Content:
   {text}
   `;
-  
+    
 // Helper function to load and chunk documents
 async function loadAndChunk(filePath: string, fileType: string) {
   let loader;

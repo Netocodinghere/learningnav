@@ -21,31 +21,58 @@ export default function Question({
 
   const handleSubmit = (value) => {
     let correct = false;
-    
+  
+    // Utility for open-ended similarity
+    const isSimilarAnswer = (userAnswer, expectedAnswer) => {
+      if (!userAnswer || !expectedAnswer) return false;
+  
+      const normalize = (str) =>
+        str.toLowerCase().replace(/[^\w\s]/gi, '').split(/\s+/);
+  
+      const userTokens = new Set(normalize(userAnswer));
+      const correctTokens = new Set(normalize(expectedAnswer));
+  
+      const intersection = [...userTokens].filter(token => correctTokens.has(token));
+      const similarity = intersection.length / Math.max(correctTokens.size, 1);
+  
+      return similarity >= 0.5; // tweak threshold if needed
+    };
+  
     switch (type) {
-      case 'mcq':
+      case 'multi-choice' ||'single-choice':
         correct = value === correctAnswer;
         setAnswer(value);
         break;
+  
+      case 'fill-in-the-blank':
+        correct = typeof value === 'string' &&
+                  typeof correctAnswer === 'string' &&
+                  value.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+        setAnswer(value);
+        break;
+  
       case 'open-ended':
-        correct = typeof value === 'string' && value.trim().length > 0;
+        if (typeof correctAnswer === 'string') {
+          correct = isSimilarAnswer(value, correctAnswer);
+        } else {
+          // If no correctAnswer provided, mark as unscored (optional logic)
+          correct = null;
+        }
         setAnswer(value);
         break;
-      case 'fill-in-blank':
-        correct = typeof value === 'string' && 
-                 typeof correctAnswer === 'string' && 
-                 value.trim().toLowerCase() === correctAnswer.toLowerCase();
-        setAnswer(value);
-        break;
+  
+      default:
+        console.warn('Unknown question type:', type);
     }
-
+  
     setIsCorrect(correct);
     onAnswer && onAnswer(value, correct);
   };
+  
 
   const renderQuestion = () => {
     switch (type) {
-      case 'mcq':
+      case 'multiple-choice' :
         return (
           <div className="space-y-3">
             {options.map((option, index) => (
@@ -67,6 +94,28 @@ export default function Question({
           </div>
         );
 
+      case 'single-choice':
+        return (
+          <div className="space-y-3">
+            {options.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => handleSubmit(index)}
+                className={`w-full text-left p-4 rounded-lg transition-all duration-200
+                  ${answer === index
+                    ? isCorrect
+                      ? 'bg-green-500/20 text-green-200'
+                      : 'bg-red-500/20 text-red-200'
+                    : 'bg-white/10 hover:bg-white/20 text-white'}
+                `}
+              >
+                <span className="font-medium">{String.fromCharCode(65 + index)}. </span>
+                {option}
+              </button>
+            ))}
+          </div>
+        );
+        
       case 'open-ended':
         return (
           <div className="space-y-4">
@@ -85,7 +134,7 @@ export default function Question({
           </div>
         );
 
-      case 'fill-in-blank':
+      case 'fill-in-the-blank':
         return (
           <div className="space-y-4">
             <input

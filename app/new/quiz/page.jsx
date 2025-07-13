@@ -88,54 +88,11 @@ export default function NewQuiz() {
 
   if (quizGenerated) {
     return (
-      <div className="max-full mx-auto w-full lg:p-16 p-8 pt-38 lg:pt-38 h-screen overflow-y-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Generated Quiz</h1>
-          <button
-            onClick={resetForm}
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-          >
-            Generate New Quiz
-          </button>
-        </div>
-        
-        <div className="mb-6 p-4 bg-white/10 rounded-lg">
-          <p className="text-gray-300">
-            Generated {questions.length} questions • Difficulty: {difficulty}
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {questions.map((question, index) => (
-            <div key={index} className="bg-white/10 rounded-lg p-6">
-              <h3 className="text-white font-semibold mb-4">
-                {index + 1}. {question.question}
-              </h3>
-              
-              {question.options && (
-                <div className="space-y-2 mb-4">
-                  {Object.entries(question.options).map(([key, value]) => (
-                    <div key={key} className="text-gray-300">
-                      <span className="font-medium text-blue-400">{key}:</span> {value}
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {question.answer && (
-                <div className="mt-4 p-3 bg-green-500/20 rounded-lg">
-                  <span className="text-green-400 font-medium">Answer: </span>
-                  <span className="text-white">
-                    {Array.isArray(question.answer) 
-                      ? question.answer.join(', ') 
-                      : question.answer}
-                  </span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+ 
+      <QuizQuestions
+        questions={questions}
+        title="Generated Quiz"/>
+    
     );
   }
 
