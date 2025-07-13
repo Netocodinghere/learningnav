@@ -21,8 +21,7 @@ export default function NewQuiz() {
     setError('');
 
     const mode = process.env.NEXT_PUBLIC_MODE;
-    const apiUrl = mode === "local" ? "http://localhost:8000/api/generate-quiz" : "/api/generate-quiz";
-
+    
     const formData = new FormData();
     formData.append('number', numQuestions.toString());
     formData.append('difficulty', difficulty);
