@@ -88,11 +88,11 @@ export default function NewQuiz() {
 
   if (quizGenerated) {
     return (
- 
+ <div className="h-screen overflow-y-auto pt-32">
       <QuizQuestions
         questions={questions}
         title="Generated Quiz"/>
-    
+    </div>
     );
   }
 

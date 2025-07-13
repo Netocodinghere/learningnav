@@ -20,6 +20,7 @@ export default function Question({
   }, [question]);
 
   const handleSubmit = (value) => {
+    const options=['A','B','C','D']
     let correct = false;
   
     // Utility for open-ended similarity
@@ -39,8 +40,13 @@ export default function Question({
     };
   
     switch (type) {
-      case 'multi-choice' ||'single-choice':
-        correct = value === correctAnswer;
+      case 'multi-choice':
+        correct = options[value] === correctAnswer.join('');
+        setAnswer(value);
+        break;
+  
+      case'single-choice':
+        correct = options[value] === correctAnswer;
         setAnswer(value);
         break;
   
@@ -115,7 +121,7 @@ export default function Question({
             ))}
           </div>
         );
-        
+
       case 'open-ended':
         return (
           <div className="space-y-4">

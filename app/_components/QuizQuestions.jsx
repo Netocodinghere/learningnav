@@ -14,13 +14,16 @@ export default function QuizQuestions({ questions, title }) {
 
     // Store the current answer
     const currentQ = questions[currentQuestionIndex];
+    const options=['A','B','C','D']
+    const value=currentQ.type=="single-choice" || currentQ.type=="multiple-choice" ? options[answer]:''
     setAnswers(prev => [
       ...prev,
       {
         id: currentQ.id,
         question: currentQ.question,
-        userAnswer: answer,
-        correctAnswer: currentQ.correctAnswer,
+        options: currentQ.options, // Assuming options are part of the question object
+        userAnswer: currentQ.type=="single-choice" || currentQ.type=="multiple-choice" ? value:answer,
+        correctAnswer: currentQ.answer,
         isCorrect: isCorrect
       }
     ]);
@@ -41,28 +44,82 @@ export default function QuizQuestions({ questions, title }) {
   if (quizFinished) {
     return (
       <div className="max-w-2xl mx-auto p-6 space-y-6 text-white">
-        <h2 className="text-2xl font-bold">Quiz Completed!</h2>
-        <p className="text-lg">You scored {score} out of {questions.length}</p>
-
-        <div className="space-y-4 mt-4">
-          {answers.map((ans, idx) => (
-            <div key={idx} className="p-4 rounded-md bg-white/5 border border-white/10">
-              <p className="font-semibold">{idx + 1}. {ans.question}</p>
-              <p>
-                <span className="text-gray-300">Your answer:</span>{' '}
-                <span className={ans.isCorrect ? 'text-green-400' : 'text-red-400'}>
-                  {String(ans.userAnswer)}
-                </span>
-              </p>
-              {!ans.isCorrect && (
-                <p className="text-sm text-gray-300">
-                  Correct answer: {String(ans.correctAnswer)}
+      <h2 className="text-2xl font-bold">Quiz Completed!</h2>
+      <p className="text-lg">You scored {score} out of {questions.length}</p>
+    
+      <div className="space-y-4 mt-4">
+        {answers.map((ans, idx) => (
+          <div
+            key={idx}
+            className="p-4 rounded-md bg-white/5 border border-white/10"
+          >
+            <p className="font-semibold mb-2">
+              {idx + 1}. {ans.question}
+            </p>
+    
+            {Array.isArray(ans.options) ? (
+              <ul className="space-y-1 pl-4">
+                {ans.options.map((opt, i) => {
+                  const isCorrect = i === ans.correctAnswer;
+                  const isUserAnswer = i === ans.userAnswer;
+                  const baseClass = "px-3 py-1 rounded inline-block";
+    
+                  let style = "text-gray-300";
+                  if (isCorrect && isUserAnswer) {
+                    style = "bg-green-600 text-white font-bold";
+                  } else if (isCorrect) {
+                    style = "bg-green-500 text-white";
+                  } else if (isUserAnswer) {
+                    style = "bg-red-500 text-white";
+                  }
+    
+                  return (
+                    <li key={i}>
+                      <span className={`${baseClass} ${style}`}>
+                        {opt}
+                      </span>
+                      
+                    </li>
+                  );
+                })}
+                <>
+                <p>
+                  <span className="text-gray-300">Your answer:</span>{' '}
+                  <span
+                    className={ans.isCorrect ? 'text-green-400' : 'text-red-400'}
+                  >
+                    {String(ans.userAnswer)}
+                  </span>
                 </p>
-              )}
-            </div>
-          ))}
-        </div>
+                {!ans.isCorrect && (
+                  <p className="text-sm text-gray-300">
+                    Correct answer: {String(ans.correctAnswer)}
+                  </p>
+                )}
+              </>
+              </ul>
+            ) : (
+              <>
+                <p>
+                  <span className="text-gray-300">Your answer:</span>{' '}
+                  <span
+                    className={ans.isCorrect ? 'text-green-400' : 'text-red-400'}
+                  >
+                    {String(ans.userAnswer)}
+                  </span>
+                </p>
+                {!ans.isCorrect && (
+                  <p className="text-sm text-gray-300">
+                    Correct answer: {String(ans.correctAnswer)}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        ))}
       </div>
+    </div>
+    
     );
   }
 
@@ -89,7 +146,7 @@ export default function QuizQuestions({ questions, title }) {
           type={currentQuestion.type}
           question={currentQuestion.question}
           options={currentQuestion.options}
-          correctAnswer={currentQuestion.correctAnswer}
+          correctAnswer={currentQuestion.answer}
           onAnswer={handleAnswerSubmit}
         />
       </div>
