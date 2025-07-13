@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { FaPlus, FaRobot } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
-import Flashcard from '@/app/_components/FlashCard';
+import Flashcard from '../../_components/FlashCard';
 export default function StudyPage() {
   const [studyHours, setStudyHours] = useState(2.5);
   const flashcards = [

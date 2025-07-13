@@ -1,5 +1,5 @@
 "use client";
-import { resendConfirmation } from "@/lib/auth";
+import { resendConfirmation } from "../../lib/auth";
 import { useState } from "react";
 
 const Page=()=>{
