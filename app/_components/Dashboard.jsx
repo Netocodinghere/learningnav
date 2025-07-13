@@ -114,12 +114,11 @@ export default function Dashboard() {
         />
      
 
-      {/* Study List Section */}
-      {showStudyList && (
+     
         <div className="mt-6">
+          <span className="text-2xl text-white font-semibold mb-5">Recent Study</span>
           <StudyList />
         </div>
-      )}
       </div>
     </div>
   );
