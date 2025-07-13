@@ -53,7 +53,7 @@ Only return a valid JSON array of flashcards. No extra commentary.
 `;
 
 async function loadAndChunk(filePath: string, fileType: string) {
-  let loader;
+  let loader:any;
   switch (fileType) {
     case 'pdf': loader = new PDFLoader(filePath); break;
     case 'docx': loader = new DocxLoader(filePath); break;
@@ -120,6 +120,46 @@ export async function GET() {
     methods: ['POST'],
   });
 }
+export const getTitle = async (chunk: string): Promise<{
+  title: string;
+} | null> => {
+  const prompt = `You work with a Study Flashcard Generator Agent. Your job is to read this content and come up with a suitable title for the study. You must return it in this format:
+
+{
+  "title": "Title of the Study"
+}
+
+Content:
+${chunk}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a concise assistant that returns only JSON objects with a study title.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.2,
+      max_tokens: 200,
+    });
+
+    const raw = response.choices[0]?.message?.content || '';
+    const cleaned = extractJsonArray(raw);
+    const parsed = JSON.parse(cleaned);
+
+    return parsed.title || null;
+  } catch (error) {
+    console.error('Error generating study title:', error);
+    return null;
+  }
+};
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -167,13 +207,16 @@ export async function POST(request: NextRequest) {
     }
 
     const flashcards = await generateFlashcards(chunks, number);
-
+    const title= await getTitle(`${chunks[0].pageContent || chunks[0]} ${chunks[1].pageContent || chunks[1]} `);
+    const studyTitle = title?.title || 'Untitled Study';
+    
     if (flashcards.length === 0) {
       return NextResponse.json({ error: 'No flashcards generated' }, { status: 500, headers: corsHeaders });
     }
 
     return NextResponse.json({
       flashcards,
+      title: studyTitle,
       totalFlashcards: flashcards.length,
     }, { headers: corsHeaders });
 
@@ -181,8 +224,4 @@ export async function POST(request: NextRequest) {
     console.error('Flashcard generation error:', error);
     return NextResponse.json({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500, headers: corsHeaders });
   }
-}
-
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 200, headers: corsHeaders });
 }

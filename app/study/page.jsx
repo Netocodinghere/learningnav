@@ -98,11 +98,11 @@ export default function StudyPage() {
   const [file, setFile] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [numberOfFlashcards, setNumberOfFlashcards] = useState(10);
-
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState('');
 
   const handleVideoSubmit = (e) => {
     e.preventDefault();
-    // TODO: Implement video processing logic
     console.log('Processing video:', videoUrl);
     setModalOpen(false);
   };
@@ -134,10 +134,7 @@ export default function StudyPage() {
       }
 
       const data = await res.json();
-      console.log("Generated Questions:", data.questions);
       
-      setQuestions(data.questions);
-      setQuizGenerated(true);
     } catch (error) {
       console.error("Error generating quiz:", error);
       setError(error.message || "Something went wrong while generating the quiz.");
