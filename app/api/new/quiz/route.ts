@@ -16,7 +16,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-// Types
 interface QuizQuestion {
   question: string;
   options?: {
@@ -28,12 +27,23 @@ interface QuizQuestion {
   answer?: string | string[];
 }
 
-// Initialize OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+function shuffleArray<T>(array: T[]): T[] {
+    const result = [...array]; // avoid mutating original
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+  
+function extractJsonArray(raw: string): string {
+    return raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+  }
+  
 
-// Question generation prompt with difficulty consideration
 const generatePrompt = (difficulty: string, number: number) => `
 Generate exactly ${number} quiz questions from the following content with ${difficulty} difficulty level.
 
@@ -99,55 +109,73 @@ async function loadAndChunk(filePath: string, fileType: string) {
   
   return await splitter.splitDocuments(docs);
 }
-
-// Helper function to generate questions using OpenAI
-async function generateQuestions(chunks: any[], number: number, difficulty: string = 'medium'): Promise<QuizQuestion[]> {
-  const results: QuizQuestion[] = [];
+async function generateQuestions(
+    chunks: any[],
+    totalQuestions: number,
+    difficulty: string = 'medium'
+  ): Promise<QuizQuestion[]> {
+    const results: QuizQuestion[] = [];
   
-  for (const chunk of chunks) {
-    try {
-      const prompt = generatePrompt(difficulty, number)
-        .replace('{text}', chunk.pageContent || chunk);
-      
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful assistant that generates quiz questions. Always respond with valid JSON arrays only. No additional text or explanations.',
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        temperature: 0.3,
-        max_tokens: 2500,
-      });
-      
-      const content = response.choices[0]?.message?.content;
-      if (content) {
-        try {
-          const questions = JSON.parse(content);
-          if (Array.isArray(questions)) {
-            results.push(...questions);
+    const numChunks = chunks.length;
+    const basePerChunk = Math.floor(totalQuestions / numChunks);
+    let remainder = totalQuestions % numChunks;
+    const shuffledChunks = shuffleArray(chunks);
+
+    for (let i = 0; i < shuffledChunks.length; i++) {
+      const chunk = shuffledChunks[i];
+
+      const questionsForChunk = basePerChunk + (remainder > 0 ? 1 : 0);
+      if (remainder > 0) remainder--;
+  
+      if (questionsForChunk === 0) continue; // skip if not needed
+  
+      const prompt = generatePrompt(difficulty, questionsForChunk).replace(
+        '{text}',
+        chunk.pageContent || chunk
+      );
+  
+      try {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are a helpful assistant that generates quiz questions. Always respond with valid JSON arrays only. No additional text or explanations.',
+            },
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+          temperature: 0.3,
+          max_tokens: 2500,
+        });
+  
+        const content = response.choices[0]?.message?.content;
+
+        if (content) {
+          try {
+            const cleaned = extractJsonArray(content);
+            const questions = JSON.parse(cleaned);
+            if (Array.isArray(questions)) {
+              results.push(...questions);
+            }
+          } catch (parseError) {
+            console.error('Error parsing JSON response:', parseError);
+            console.error('Raw content:', content);
           }
-        } catch (parseError) {
-          console.error('Error parsing JSON response:', parseError);
-          console.error('Response content:', content);
         }
+      } catch (error) {
+        console.error('❌ Error generating questions for chunk', i, error);
       }
-    } catch (error) {
-      console.error('Error generating questions for chunk:', error);
-      // Continue with other chunks even if one fails
     }
+  
+    return results.slice(0, totalQuestions); 
   }
   
-  return results.slice(0, number); // Limit to requested number
-}
 
-// Helper function to chunk text directly
-function chunkText(text: string) {
+  function chunkText(text: string) {
   const splitter = new RecursiveCharacterTextSplitter({
     chunkSize: 500,
     chunkOverlap: 50,
@@ -193,11 +221,9 @@ export async function POST(request: NextRequest) {
     let chunks;
     
     if (file) {
-      // Handle file upload
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      // Create temporary file
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
       
       if (!['pdf', 'docx', 'txt', 'doc'].includes(fileExtension || '')) {
@@ -219,7 +245,6 @@ export async function POST(request: NextRequest) {
           { status: 500, headers: corsHeaders }
         );
       } finally {
-        // Clean up temporary file
         try {
           await unlink(tempPath);
         } catch (cleanupError) {
@@ -227,7 +252,6 @@ export async function POST(request: NextRequest) {
         }
       }
     } else if (text) {
-      // Handle text input
       chunks = chunkText(text);
     }
     
@@ -238,7 +262,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Generate questions
     const questions = await generateQuestions(chunks, number, difficulty);
     
     if (questions.length === 0) {
@@ -268,7 +291,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Optional: Add other HTTP methods if needed
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
