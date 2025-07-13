@@ -4,7 +4,7 @@ import { useState } from 'react';
 import QuizQuestions from '../../_components/QuizQuestions';
 
 export default function NewQuiz() {
-  const [inputMethod, setInputMethod] = useState('text'); // 'text', 'file', or 'youtube'
+  const [inputMethod, setInputMethod] = useState('text');
   const [content, setContent] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [file, setFile] = useState(null);
@@ -12,25 +12,132 @@ export default function NewQuiz() {
   const [difficulty, setDifficulty] = useState('medium');
   const [isGenerating, setIsGenerating] = useState(false);
   const [quizGenerated, setQuizGenerated] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsGenerating(true);
-    
-    // TODO: Implement API call to generate quiz based on input method
-    // For now, we'll simulate a delay
-    setTimeout(() => {
+    setError('');
+
+    const mode = process.env.NEXT_PUBLIC_MODE;
+    const apiUrl = mode === "local" ? "http://localhost:8000/api/generate-quiz" : "/api/generate-quiz";
+
+    const formData = new FormData();
+    formData.append('number', numQuestions.toString());
+    formData.append('difficulty', difficulty);
+
+    // Validation
+    if (inputMethod === 'file') {
+      if (!file) {
+        setError("Please upload a file.");
+        setIsGenerating(false);
+        return;
+      }
+      formData.append('file', file);
+    } else if (inputMethod === 'text') {
+      if (!content.trim()) {
+        setError("Please enter text content.");
+        setIsGenerating(false);
+        return;
+      }
+      formData.append('text', content);
+    } else if (inputMethod === 'youtube') {
+      if (!youtubeUrl.trim()) {
+        setError("Please enter a YouTube URL.");
+        setIsGenerating(false);
+        return;
+      }
+      // For now, we'll treat YouTube as unsupported in the Next.js API
+      // You would need to implement YouTube transcript extraction
+      setError("YouTube input is not yet supported in this version.");
       setIsGenerating(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to generate quiz.");
+      }
+
+      const data = await res.json();
+      console.log("Generated Questions:", data.questions);
+      
+      setQuestions(data.questions);
       setQuizGenerated(true);
-    }, 2000);
+    } catch (error) {
+      console.error("Error generating quiz:", error);
+      setError(error.message || "Something went wrong while generating the quiz.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const resetForm = () => {
+    setQuizGenerated(false);
+    setQuestions([]);
+    setError('');
+    setContent('');
+    setFile(null);
+    setYoutubeUrl('');
   };
 
   if (quizGenerated) {
-    return( 
-    <div className='pt-32'>
-    <QuizQuestions />
-    </div>
+    return (
+      <div className="max-full mx-auto w-full lg:p-16 p-8 pt-38 lg:pt-38 h-screen overflow-y-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-white">Generated Quiz</h1>
+          <button
+            onClick={resetForm}
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+          >
+            Generate New Quiz
+          </button>
+        </div>
+        
+        <div className="mb-6 p-4 bg-white/10 rounded-lg">
+          <p className="text-gray-300">
+            Generated {questions.length} questions • Difficulty: {difficulty}
+          </p>
+        </div>
 
+        <div className="space-y-6">
+          {questions.map((question, index) => (
+            <div key={index} className="bg-white/10 rounded-lg p-6">
+              <h3 className="text-white font-semibold mb-4">
+                {index + 1}. {question.question}
+              </h3>
+              
+              {question.options && (
+                <div className="space-y-2 mb-4">
+                  {Object.entries(question.options).map(([key, value]) => (
+                    <div key={key} className="text-gray-300">
+                      <span className="font-medium text-blue-400">{key}:</span> {value}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {question.answer && (
+                <div className="mt-4 p-3 bg-green-500/20 rounded-lg">
+                  <span className="text-green-400 font-medium">Answer: </span>
+                  <span className="text-white">
+                    {Array.isArray(question.answer) 
+                      ? question.answer.join(', ') 
+                      : question.answer}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     );
   }
 
@@ -38,25 +145,44 @@ export default function NewQuiz() {
     <div className="max-full mx-auto w-full lg:p-16 p-8 pt-38 lg:pt-38 h-screen overflow-y-auto space-y-8">
       <h1 className="text-3xl font-bold text-white text-center">Generate a New Quiz</h1>
       
+      {error && (
+        <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
+      
       {/* Input Method Selection */}
       <div className="flex justify-center space-x-4">
         <button
           onClick={() => setInputMethod('text')}
-          className={`px-4 py-2 rounded-lg transition-colors ${inputMethod === 'text' ? 'bg-blue-500 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            inputMethod === 'text' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-white/10 text-gray-300 hover:bg-white/20'
+          }`}
         >
           Text Description
         </button>
         <button
           onClick={() => setInputMethod('file')}
-          className={`px-4 py-2 rounded-lg transition-colors ${inputMethod === 'file' ? 'bg-blue-500 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            inputMethod === 'file' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-white/10 text-gray-300 hover:bg-white/20'
+          }`}
         >
           Upload Notes
         </button>
         <button
           onClick={() => setInputMethod('youtube')}
-          className={`px-4 py-2 rounded-lg transition-colors ${inputMethod === 'youtube' ? 'bg-blue-500 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            inputMethod === 'youtube' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-white/10 text-gray-300 hover:bg-white/20'
+          } opacity-50 cursor-not-allowed`}
+          disabled
         >
-          YouTube Video
+          YouTube Video (Coming Soon)
         </button>
       </div>
 
@@ -98,7 +224,7 @@ export default function NewQuiz() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Enter your text content here..."
-            className="w-full h-48 bg-white/10 text-white rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full h-48 bg-white/10 text-white rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
             required
           />
         )}
@@ -112,6 +238,9 @@ export default function NewQuiz() {
               <span className="mt-2 text-base">
                 {file ? file.name : 'Select a file'}
               </span>
+              <span className="text-sm text-gray-400 mt-1">
+                PDF, DOCX, or TXT files only
+              </span>
               <input
                 type="file"
                 className="hidden"
@@ -124,23 +253,30 @@ export default function NewQuiz() {
         )}
 
         {inputMethod === 'youtube' && (
-          <input
-            type="url"
-            value={youtubeUrl}
-            onChange={(e) => setYoutubeUrl(e.target.value)}
-            placeholder="Enter YouTube video URL"
-            className="w-full bg-white/10 text-white rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+          <div className="relative">
+            <input
+              type="url"
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+              placeholder="Enter YouTube video URL"
+              className="w-full bg-white/10 text-white rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+              disabled
+            />
+            <div className="absolute inset-0 bg-gray-500/50 rounded-lg flex items-center justify-center">
+              <span className="text-white font-medium">Coming Soon</span>
+            </div>
+          </div>
         )}
- <div className="w-full justify-center flex items-center">
-        <button
-          type="submit"
-          disabled={isGenerating}
-          className="p-6 self-center py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isGenerating ? 'Generating Quiz...' : 'Generate Quiz'}
-        </button></div>
+
+        <div className="w-full justify-center flex items-center">
+          <button
+            type="submit"
+            disabled={isGenerating || inputMethod === 'youtube'}
+            className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGenerating ? 'Generating Quiz...' : 'Generate Quiz'}
+          </button>
+        </div>
       </form>
     </div>
   );

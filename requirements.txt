@@ -7,3 +7,4 @@ python-docx
 langchain-community
 pydantic
 python-multipart
+dotenv
