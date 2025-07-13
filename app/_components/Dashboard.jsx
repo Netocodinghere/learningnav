@@ -98,7 +98,7 @@ export default function Dashboard() {
           title="Create New Study"
           description="Start a new study session with AI-powered assistance"
           icon="📚"
-          onClick={() => setShowStudyList(!showStudyList)}
+          onClick={() => window != "undefined"? window.location.href="/study":""}
         />
         <ActionButton
           title="Take a Quiz"
