@@ -1,8 +1,8 @@
 // app/api/generate-quiz/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
-import { DocxLoader } from 'langchain/document_loaders/fs/docx';
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import { TextLoader } from 'langchain/document_loaders/fs/text';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { writeFile, unlink } from 'fs/promises';
@@ -156,7 +156,6 @@ function chunkText(text: string) {
   return splitter.createDocuments([text]);
 }
 
-// GET handler (for testing)
 export async function GET() {
   return NextResponse.json({
     message: 'Quiz Generation API is running',
@@ -165,7 +164,6 @@ export async function GET() {
   });
 }
 
-// POST handler - Main quiz generation endpoint
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();

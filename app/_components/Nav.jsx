@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/auth' // adjust if your path differs
 
+import { supabase } from '../../lib/auth' 
 const Nav = () => {
   const [user, setUser] = useState(null)
 

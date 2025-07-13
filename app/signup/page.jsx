@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import { signInWithGoogle } from '@/lib/auth';
+import { signInWithGoogle } from '../../lib/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

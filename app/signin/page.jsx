@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 
-import { signInWithGoogle } from '@/lib/auth';
+import { signInWithGoogle } from '../../lib/auth';
 
 const Toast = ({ message, type, duration = 3000, onClose }) => {
   const [visible, setVisible] = useState(true);

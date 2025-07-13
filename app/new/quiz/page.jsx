@@ -48,15 +48,13 @@ export default function NewQuiz() {
         setIsGenerating(false);
         return;
       }
-      // For now, we'll treat YouTube as unsupported in the Next.js API
-      // You would need to implement YouTube transcript extraction
       setError("YouTube input is not yet supported in this version.");
       setIsGenerating(false);
       return;
     }
 
     try {
-      const res = await fetch(apiUrl, {
+      const res = await fetch('/api/new/quiz', {
         method: 'POST',
         body: formData,
       });

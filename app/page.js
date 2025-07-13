@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Hero from "./_components/Hero";
 import Dashboard from "./_components/Dashboard";
 import  FullScreenLoader  from "./_components/Loader";
-import { supabase, signInWithGoogle } from "@/lib/auth";
+import { supabase, signInWithGoogle } from "../lib/auth";
 
 export default function Home() {
   const [auth,setAuth] = useState(false)
