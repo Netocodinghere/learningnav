@@ -178,7 +178,7 @@ async function generateQuestions(
 
     try {
       const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini-2024-07-18',
         messages: [
           {
             role: 'system',
@@ -360,7 +360,7 @@ Generate exactly ${number} quiz questions from the following content with ${diff
   ${text}`;
 
         const response = await openai.chat.completions.create({
-          model: 'gpt-4o',
+          model: 'gpt-4o-mini-2024-07-18',
           messages: [
             {
               role: 'system',

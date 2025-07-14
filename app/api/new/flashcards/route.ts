@@ -84,7 +84,7 @@ async function generateFlashcards(chunks: any[], number: number): Promise<{ fron
 
     try {
       const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini-2024-07-18',
         messages: [
           {
             role: 'system',
@@ -134,7 +134,7 @@ ${chunk}`;
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini-2024-07-18',
       messages: [
         {
           role: 'system',

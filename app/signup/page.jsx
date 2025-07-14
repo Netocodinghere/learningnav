@@ -53,9 +53,11 @@ const handleSubmit =async () => {
       }
 
       const result = await response.json();
+
       if (result.error) {
           throw new Error(result.error);
       }
+
 
       setIsSubmitting(false);
       if(window  != 'undefined'){

@@ -33,14 +33,14 @@ function ActionButton({ title, description, icon, onClick }) {
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({profile}) {
   // Mock user data - this would come from your authentication system
   const userData = {
   metrics: {
-      studiesCreated: 15,
-      quizzesTaken: 8,
-      flashcardsGenerated: 120,
-      cheatsheetsCreated: 5
+      studiesCreated: profile.studies,
+      quizzesTaken: profile.quizzes,
+      flashcardsGenerated: profile.flashcards,
+      cheatsheetsCreated: profile.cheatsheets
     }
   };
   const metrics = [

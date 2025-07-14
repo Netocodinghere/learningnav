@@ -9,6 +9,7 @@ export default function Home() {
   const [auth,setAuth] = useState(false)
   const [pageLoading,setPageLoading]=useState(true)
   const [user,setUser]=useState(null)
+  const [metrics,setMetrics]=useState(null)
   useEffect(()=>{
     
     const fetchUser = async () => {
@@ -18,20 +19,29 @@ export default function Home() {
       setUser(session?.user || null)
      
       if(session?.user){
+
         setAuth(true)
-        setPageLoading(false)
+        const metrics= await fetch("/api/get/profile",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            user_id:session?.user?.id
+          })
+        })
+        const res= await metrics.json()
+        setMetrics(res.data || null)
         
       }
-      
-    setPageLoading(false)
- 
+       setPageLoading(false)
     }
     fetchUser()
-  })
+  },[])
   return (
    <div className="bg-transparent">
 
-    {pageLoading? <div className="h-screen flex items-center justify-center w-full "> <FullScreenLoader message="Wait A Moment" type="ripple" /> </div>: auth? <Dashboard/>:<Hero/>}
+    {pageLoading? <div className="h-screen flex items-center justify-center w-full "> <FullScreenLoader message="Wait A Moment" type="ripple" /> </div>: auth? <Dashboard profile={metrics}/>:<Hero/>}
    </div>
   );
 }
