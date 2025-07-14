@@ -4,6 +4,8 @@ import { FaPlus, FaRobot } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
 import Flashcard from '../../_components/FlashCard';
 import { useParams } from 'next/navigation';
+import {supabase} from "../../../lib/auth"
+
 export default function StudyPage() {
   const [studyHours, setStudyHours] = useState(2.5);
   const [study,setStudy]=useState(null)
@@ -89,7 +91,7 @@ export default function StudyPage() {
         <section>
           <h2 className="text-xl font-semibold mb-4">Flashcards</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {study.flashcards.map((card, index) => (
+            {study!==null && study.flashcards.map((card, index) => (
               <Flashcard key={index} question={card.front} answer={card.back} />
             ))}
           </div>

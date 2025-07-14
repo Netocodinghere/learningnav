@@ -9,9 +9,7 @@ export async function POST(request: NextRequest ){
     const  req= await request.json()
     const {user_id,study_id}= req
     try{
-    const {data, error}= await supabase.from('studies').select('*').eq('user_id',user_id).order('created_at',{
-        ascending:false
-    })
+    const {data, error}= await supabase.from('studies').select('*').eq('id',study_id).single()
     if(error){
         return NextResponse.json({error: error.message})
     }

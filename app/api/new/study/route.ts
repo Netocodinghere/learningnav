@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('studies')
-      .insert([{ title, flashcards, user_id, reference }])
+      .insert([{ title, flashcards, user_id, reference, source:"note" }])
       .select()
       .single();
 
