@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
 
     const flashcards = await generateFlashcards(chunks, number);
     const title= await getTitle(`${chunks[0].pageContent || chunks[0]} ${chunks[1].pageContent || chunks[1]} `);
-    const studyTitle = title?.title || 'Untitled Study';
+    const studyTitle = title;
     
     if (flashcards.length === 0) {
       return NextResponse.json({ error: 'No flashcards generated' }, { status: 500, headers: corsHeaders });

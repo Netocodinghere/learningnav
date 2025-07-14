@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StudyList from '../_components/StudyList';
+import { supabase } from '../../lib/auth';
 function StudyModal({
   open,
   onClose,
@@ -73,14 +74,14 @@ function StudyModal({
             type="file"
             onChange={e => {
               setFile(e.target.files[0]);
-              onFileUpload(e);
+              
             }}
             className="w-full px-4 py-2 border border-gray-300 rounded-md mb-3 focus:ring-blue-500 focus:border-blue-500"
             accept=".pdf,.doc,.docx,.txt"
           />
           {file && (
             <button
-              onClick={() => console.log('Processing file...')}
+              onClick={(e) => onFileUpload(e,file)}
               className="w-full bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition-colors"
             >
               Create Study from Notes
@@ -100,6 +101,26 @@ export default function StudyPage() {
   const [numberOfFlashcards, setNumberOfFlashcards] = useState(10);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
+  const [accessToken,setAccessToken]=useState(null); 
+  useEffect(()=>{
+    const fetchUser = async () => {
+
+      const { data: { session } } = await supabase.auth.getSession()
+
+      setUser(session?.user || null)
+     
+      if(session?.user){
+        setAccessToken(session?.access_token)
+        setUser(session?.user)
+        
+      }
+      
+ 
+    }
+    fetchUser()
+
+  },[])
 
   const handleVideoSubmit = (e) => {
     e.preventDefault();
@@ -107,7 +128,7 @@ export default function StudyPage() {
     setModalOpen(false);
   };
  
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e,file) => {
     e.preventDefault();
     setIsGenerating(true);
     setError('');
@@ -123,7 +144,7 @@ export default function StudyPage() {
       formData.append('number', numberOfFlashcards);
 
     try {
-      const res = await fetch('/api/new/study', {
+      const res = await fetch('/api/new/flashcards', {
         method: 'POST',
         body: formData,
       });
@@ -134,6 +155,22 @@ export default function StudyPage() {
       }
 
       const data = await res.json();
+
+      try{
+        const newForm=new FormData();
+        newForm.append('file',file);
+        newForm.append('title',data.title);
+        newForm.append('flashcards',JSON.stringify(data.flashcards));
+        newForm.append('user_id',user.id);
+        newForm.append('access_token',accessToken);
+        const res = await fetch('/api/new/study', {
+          method: 'POST',
+          body: newForm,
+        });
+
+      }catch(err){
+        console.log(err);
+      }
       
     } catch (error) {
       console.error("Error generating quiz:", error);
