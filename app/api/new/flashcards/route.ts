@@ -130,7 +130,7 @@ export async function GET() {
     methods: ['POST'],
   });
 }
-export const getTitle = async (chunk: string): Promise<{
+const getTitle = async (chunk: string): Promise<{
   title: string;
 } | null> => {
   const prompt = `You work with a Study Flashcard Generator Agent. Your job is to read this content and come up with a suitable title for the study. You must return it in this format:
