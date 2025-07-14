@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {supabase} from "../../../../lib/auth"
 
-export default async function POST(request: NextRequest ){
+export async function POST(request: NextRequest ){
     const  req= await request.json()
     const {user_id}= req
     try{
