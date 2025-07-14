@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import QuizQuestions from '../../_components/QuizQuestions';
 
 export default function NewQuiz() {
@@ -14,6 +14,37 @@ export default function NewQuiz() {
   const [quizGenerated, setQuizGenerated] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [error, setError] = useState('');
+  const [user,setUser]=useState(null)
+  const [metrics,setMetrics]=useState(null)
+  useEffect(()=>{
+    
+    const fetchUser = async () => {
+
+      const { data: { session } } = await supabase.auth.getSession()
+
+      setUser(session?.user || null)
+     
+      if(session?.user){
+
+        setAuth(true)
+        const metrics= await fetch("/api/get/profile",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            user_id:session?.user?.id
+          })
+        })
+        const res= await metrics.json()
+        setMetrics(res.data || null)
+        
+      }
+       setPageLoading(false)
+    }
+    fetchUser()
+  },[])
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,10 +95,17 @@ export default function NewQuiz() {
       }
 
       const data = await res.json();
-      console.log("Generated Questions:", data.questions);
       
       setQuestions(data.questions);
       setQuizGenerated(true);
+
+      const updateUser=await fetch('/api/update/profile',{
+        method:'POST',
+        body:JSON.stringify({
+          user_id: user?.id,
+          quizzes:metrics?.quizzes+1
+        })
+      })
     } catch (error) {
       console.error("Error generating quiz:", error);
       setError(error.message || "Something went wrong while generating the quiz.");
