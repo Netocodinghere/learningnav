@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import QuizQuestions from '../../_components/QuizQuestions';
+import { supabase } from '../../../lib/auth';
 
 export default function NewQuiz() {
   const [inputMethod, setInputMethod] = useState('text');
@@ -26,7 +27,6 @@ export default function NewQuiz() {
      
       if(session?.user){
 
-        setAuth(true)
         const metrics= await fetch("/api/get/profile",{
           method:"POST",
           headers:{
@@ -40,7 +40,6 @@ export default function NewQuiz() {
         setMetrics(res.data || null)
         
       }
-       setPageLoading(false)
     }
     fetchUser()
   },[])
@@ -101,6 +100,9 @@ export default function NewQuiz() {
 
       const updateUser=await fetch('/api/update/profile',{
         method:'POST',
+        headers:{
+          "Content-Type":"application/json"
+        },
         body:JSON.stringify({
           user_id: user?.id,
           quizzes:metrics?.quizzes+1

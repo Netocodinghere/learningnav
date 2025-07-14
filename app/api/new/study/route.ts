@@ -8,19 +8,13 @@ import { DocxLoader } from '@langchain/community/document_loaders/fs/docx';
 import { TextLoader } from 'langchain/document_loaders/fs/text';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { createClient } from '@supabase/supabase-js';
+import  {supabase} from "../../../../lib/auth"
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6eGVtcmdhdHpqY2x3Ymt0enl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzMzU3NTcsImV4cCI6MjA2NzkxMTc1N30.kRtUyVtztGb7Gt3j0sH4SnsYxI6JzHqr6nbJ39Kjr8w", {
-        global: {
-          headers: {
-            Authorization: `Bearer ${formData.get('access_token')}`
-          }
-        }
-      });
-      
+    
 
     const title = formData.get('title') as string;
     const flashcardsRaw = formData.get('flashcards') as string;

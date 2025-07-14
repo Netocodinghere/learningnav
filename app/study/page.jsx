@@ -101,9 +101,10 @@ export default function StudyPage() {
   const [numberOfFlashcards, setNumberOfFlashcards] = useState(10);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
-  const [user, setUser] = useState(null);
-  const [accessToken,setAccessToken]=useState(null); 
+  const [user,setUser]=useState(null)
+  const [metrics,setMetrics]=useState(null)
   useEffect(()=>{
+    
     const fetchUser = async () => {
 
       const { data: { session } } = await supabase.auth.getSession()
@@ -111,17 +112,24 @@ export default function StudyPage() {
       setUser(session?.user || null)
      
       if(session?.user){
-        setAccessToken(session?.access_token)
-        setUser(session?.user)
+
+        const metrics= await fetch("/api/get/profile",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            user_id:session?.user?.id
+          })
+        })
+        const res= await metrics.json()
+        setMetrics(res.data || null)
         
       }
-      
- 
     }
     fetchUser()
-
   },[])
-
+ 
   const handleVideoSubmit = (e) => {
     e.preventDefault();
     console.log('Processing video:', videoUrl);
@@ -163,10 +171,29 @@ export default function StudyPage() {
         newForm.append('flashcards',JSON.stringify(data.flashcards));
         newForm.append('user_id',user.id);
         newForm.append('access_token',accessToken);
-        const res = await fetch('/api/new/study', {
+        const rus = await fetch('/api/new/study', {
           method: 'POST',
           body: newForm,
         });
+
+        const data_study = await rus.json();
+        if(data_study.study){
+          const updateUser=await fetch('/api/update/profile',{
+            method:'POST',
+            headers:{
+              "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+              user_id: user?.id,
+              flashcards:metrics?.flashcards+data.flashcards,
+              studies:metrics?.studies+1
+            })
+          })
+
+          if(window !="undefined"){
+            window.location.href="/study/"+data_study.study.id;
+        }
+      }
 
       }catch(err){
         console.log(err);
