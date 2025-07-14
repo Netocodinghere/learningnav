@@ -42,33 +42,22 @@ export async function POST(request: NextRequest) {
       if (!['pdf', 'docx', 'txt', 'doc'].includes(fileExtension || '')) {
         return NextResponse.json({ error: 'Unsupported file format' }, { status: 400 });
       }
-
+    
       const buffer = Buffer.from(await file.arrayBuffer());
       const tempPath = join(tmpdir(), `upload_${Date.now()}.${fileExtension}`);
-
+    
       try {
         await writeFile(tempPath, buffer);
-
+    
         let loader;
         if (fileExtension === 'pdf') loader = new PDFLoader(tempPath);
         else if (fileExtension === 'docx' || fileExtension === 'doc') loader = new DocxLoader(tempPath);
         else loader = new TextLoader(tempPath);
-
+    
         const docs = await loader.load();
         const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 512, chunkOverlap: 32 });
         const splitDocs = await splitter.splitDocuments(docs);
-        const embed=[]
-        function averageEmbeddings(vectors: number[][]): number[] {
-          const length = vectors[0].length;
-          const avg = new Array(length).fill(0);
-          for (const vec of vectors) {
-            for (let i = 0; i < length; i++) {
-              avg[i] += vec[i];
-            }
-          }
-          return avg.map(v => v / vectors.length);
-        }
-        
+    
         const resultPairs = await Promise.all(splitDocs.map(async d => {
           try {
             const res = await openai.embeddings.create({
@@ -81,20 +70,37 @@ export async function POST(request: NextRequest) {
             return null;
           }
         }));
-        
+    
         const validResults = resultPairs.filter(Boolean);
+        if (validResults.length === 0) {
+          return NextResponse.json(
+            { error: 'All document chunks failed to embed.' },
+            { status: 500 }
+          );
+        }
+    
         const textChunks = validResults.map(r => r.content);
         const embeddings = validResults.map(r => r.embedding);
-        
-        const averagedEmbedding = averageEmbeddings(embed);
-
-        
+    
+        const averageEmbeddings = (vectors: number[][]): number[] => {
+          const length = vectors[0].length;
+          const avg = new Array(length).fill(0);
+          for (const vec of vectors) {
+            for (let i = 0; i < length; i++) {
+              avg[i] += vec[i];
+            }
+          }
+          return avg.map(v => v / vectors.length);
+        };
+    
+        const averagedEmbedding = averageEmbeddings(embeddings);
+    
         const { data: docInsert, error: docError } = await supabase
           .from('documents')
           .insert([{ content: textChunks.join(''), embedding: averagedEmbedding }])
           .select('id')
           .single();
-
+    
         if (docError) {
           console.error('Error inserting into documents:', docError);
           return NextResponse.json(
@@ -102,16 +108,19 @@ export async function POST(request: NextRequest) {
             { status: 500 }
           );
         }
-
+    
         reference = docInsert.id;
       } catch (err) {
         console.error('File processing or embedding error:', err);
+        return NextResponse.json(
+          { error: 'Error while processing file and embedding' },
+          { status: 500 }
+        );
       } finally {
         await unlink(tempPath).catch(() => {});
       }
     }
-
-    const { data, error } = await supabase
+        const { data, error } = await supabase
       .from('studies')
       .insert([{ title, flashcards, user_id, reference, source:"note" }])
       .select()

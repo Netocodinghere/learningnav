@@ -157,27 +157,24 @@ async function generateQuestions(
   totalQuestions: number,
   difficulty: string = 'medium'
 ): Promise<QuizQuestion[]> {
-  const results: QuizQuestion[] = [];
-
   const numChunks = chunks.length;
   const basePerChunk = Math.floor(totalQuestions / numChunks);
   let remainder = totalQuestions % numChunks;
   const shuffledChunks = shuffleArray(chunks);
 
-  for (let i = 0; i < shuffledChunks.length; i++) {
-    const chunk = shuffledChunks[i];
+  const prompts = shuffledChunks.map((chunk, i) => {
     const questionsForChunk = basePerChunk + (remainder > 0 ? 1 : 0);
     if (remainder > 0) remainder--;
 
-    if (questionsForChunk === 0) continue;
+    if (questionsForChunk === 0) return null;
 
     const prompt = generatePrompt(difficulty, questionsForChunk).replace(
       '{text}',
       chunk.pageContent || chunk
     );
 
-    try {
-      const response = await openai.chat.completions.create({
+    return openai.chat.completions
+      .create({
         model: 'gpt-4o-mini-2024-07-18',
         messages: [
           {
@@ -192,29 +189,32 @@ async function generateQuestions(
         ],
         temperature: 0.3,
         max_tokens: 2500,
-      });
+      })
+      .then((response) => {
+        const content = response.choices[0]?.message?.content;
+        if (!content) return [];
 
-      const content = response.choices[0]?.message?.content;
-
-      if (content) {
         try {
           const cleaned = extractJsonArray(content);
           const questions = JSON.parse(cleaned);
-          if (Array.isArray(questions)) {
-            results.push(...questions);
-          }
-        } catch (parseError) {
-          console.error('Error parsing JSON response:', parseError);
-          console.error('Raw content:', content);
+          return Array.isArray(questions) ? questions : [];
+        } catch (error) {
+          console.error('Parsing error:', error);
+          console.error('Raw response:', content);
+          return [];
         }
-      }
-    } catch (error) {
-      console.error('❌ Error generating questions for chunk', i, error);
-    }
-  }
+      })
+      .catch((error) => {
+        console.error(`Error generating questions for chunk ${i}:`, error);
+        return [];
+      });
+  });
 
-  return results.slice(0, totalQuestions);
+  const allResults = await Promise.all(prompts.filter(Boolean));
+  const flattened = allResults.flat();
+  return flattened.slice(0, totalQuestions);
 }
+
 
 export async function GET() {
   return NextResponse.json({
