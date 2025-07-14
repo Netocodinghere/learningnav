@@ -64,6 +64,14 @@ async function loadAndChunk(filePath: string, fileType: string) {
   const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 500, chunkOverlap: 50 });
   return await splitter.splitDocuments(docs);
 }
+function shuffleArray<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
 function chunkText(text: string) {
   const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 500, chunkOverlap: 50 });
@@ -72,10 +80,11 @@ function chunkText(text: string) {
 
 async function generateFlashcards(chunks: any[], number: number): Promise<{ front: string, back: string }[]> {
   //const flashcards: { front: string, back: string }[] = [];
+  const shuffledChunks=shuffleArray(chunks)
   const basePerChunk = Math.floor(number / chunks.length);
   let remainder = number % chunks.length;
 
-  const tasks = chunks.map(async (chunk, i) => {
+  const tasks = shuffledChunks.map(async (chunk, i) => {
     const cardsThisChunk = basePerChunk + (i < remainder ? 1 : 0);
     const prompt = generateFlashcardPrompt(cardsThisChunk).replace('{text}', chunk.pageContent || chunk);
     try {
