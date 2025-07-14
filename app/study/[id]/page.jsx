@@ -5,6 +5,7 @@ import { FiClock } from 'react-icons/fi';
 import Flashcard from '../../_components/FlashCard';
 import { useParams } from 'next/navigation';
 import {supabase} from "../../../lib/auth"
+import { FullScreenLoader } from '../../_components/Loader';
 
 export default function StudyPage() {
   const [studyHours, setStudyHours] = useState(2.5);
@@ -12,6 +13,8 @@ export default function StudyPage() {
   const [user,setUser]=useState(null)
   const [metrics,setMetrics]=useState(null)
   const [accessToken,setAccessToken]=useState(null)
+  
+  const [pageLoading,setPageLoading]=useState(true)
   const {id}=useParams()
 
   useEffect(()=>{
@@ -50,6 +53,7 @@ export default function StudyPage() {
         const studyRes= await study.json()
 
         setStudy(studyRes.data)
+        setPageLoading(false)
 
  
         
@@ -77,6 +81,9 @@ export default function StudyPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white   sm:p-8">
+{
+  pageLoading? (
+  <div className="h-screen w-full flex items-center justify-center"><FullScreenLoader type='ripple'/></div>):
       <div className="max-w-5xl mx-auto space-y-10 pt-32">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -140,6 +147,8 @@ export default function StudyPage() {
           </button>
         </div>
       </div>
+
+          }
     </div>
   );
 }
