@@ -103,6 +103,7 @@ export default function StudyPage() {
   const [error, setError] = useState('');
   const [user,setUser]=useState(null)
   const [metrics,setMetrics]=useState(null)
+  const [accessToken,setAccessToken]=useState(null)
   useEffect(()=>{
     
     const fetchUser = async () => {
@@ -110,6 +111,7 @@ export default function StudyPage() {
       const { data: { session } } = await supabase.auth.getSession()
 
       setUser(session?.user || null)
+      setAccessToken(session?.access_token || null)
      
       if(session?.user){
 
