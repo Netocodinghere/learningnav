@@ -57,19 +57,41 @@ export async function POST(request: NextRequest) {
         const docs = await loader.load();
         const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 512, chunkOverlap: 32 });
         const splitDocs = await splitter.splitDocuments(docs);
+        const embed=[]
+        function averageEmbeddings(vectors: number[][]): number[] {
+          const length = vectors[0].length;
+          const avg = new Array(length).fill(0);
+          for (const vec of vectors) {
+            for (let i = 0; i < length; i++) {
+              avg[i] += vec[i];
+            }
+          }
+          return avg.map(v => v / vectors.length);
+        }
+        
+        const resultPairs = await Promise.all(splitDocs.map(async d => {
+          try {
+            const res = await openai.embeddings.create({
+              model: 'text-embedding-3-small',
+              input: d.pageContent,
+            });
+            return { content: d.pageContent, embedding: res.data[0].embedding };
+          } catch (err) {
+            console.error('Embedding failed:', err);
+            return null;
+          }
+        }));
+        
+        const validResults = resultPairs.filter(Boolean);
+        const textChunks = validResults.map(r => r.content);
+        const embeddings = validResults.map(r => r.embedding);
+        
+        const averagedEmbedding = averageEmbeddings(embed);
 
-        const fullText = splitDocs.map(d => d.pageContent).join('\n');
-
-        const embeddingResponse = await openai.embeddings.create({
-          model: 'text-embedding-3-small',
-          input: fullText,
-        });
-
-        const embedding = embeddingResponse.data[0].embedding;
-
+        
         const { data: docInsert, error: docError } = await supabase
           .from('documents')
-          .insert([{ content: fullText, embedding }])
+          .insert([{ content: textChunks.join(''), embedding: averagedEmbedding }])
           .select('id')
           .single();
 
