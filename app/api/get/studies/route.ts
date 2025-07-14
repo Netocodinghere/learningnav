@@ -9,11 +9,13 @@ export async function POST(request: NextRequest ){
     const  req= await request.json()
     const {user_id,study_id}= req
     try{
-    const {data, error}= await supabase.from('studies').select('*').eq('id',study_id).single()
+    const {data, error}= await supabase.from('studies').select('*').eq('user_id',user_id).order('created_at',{
+        ascending:false
+    })
     if(error){
         return NextResponse.json({error: error.message})
     }
-    return NextResponse.json({success:"Study Received Successfully",data})
+    return NextResponse.json({success:"Studies Retrieved Successfully",data})
     }
     catch(error){
         return NextResponse.json({error: error.message})
