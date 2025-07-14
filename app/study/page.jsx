@@ -187,7 +187,7 @@ export default function StudyPage() {
             },
             body:JSON.stringify({
               user_id: user?.id,
-              flashcards:metrics?.flashcards+data.flashcards,
+              flashcards:metrics?.flashcards+data.totalFlashcards,
               studies:metrics?.studies+1
             })
           })

@@ -71,17 +71,13 @@ function chunkText(text: string) {
 }
 
 async function generateFlashcards(chunks: any[], number: number): Promise<{ front: string, back: string }[]> {
-  const flashcards: { front: string, back: string }[] = [];
+  //const flashcards: { front: string, back: string }[] = [];
   const basePerChunk = Math.floor(number / chunks.length);
   let remainder = number % chunks.length;
 
-  for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i];
-    const cardsThisChunk = basePerChunk + (remainder > 0 ? 1 : 0);
-    if (remainder > 0) remainder--;
-
+  const tasks = chunks.map(async (chunk, i) => {
+    const cardsThisChunk = basePerChunk + (i < remainder ? 1 : 0);
     const prompt = generateFlashcardPrompt(cardsThisChunk).replace('{text}', chunk.pageContent || chunk);
-
     try {
       const response = await openai.chat.completions.create({
         model: 'gpt-4o-mini-2024-07-18',
@@ -99,16 +95,21 @@ async function generateFlashcards(chunks: any[], number: number): Promise<{ fron
         max_tokens: 2000,
       });
 
+    
       const content = response.choices[0]?.message?.content;
       if (content) {
         const cleaned = extractJsonArray(content);
-        const cards = JSON.parse(cleaned);
-        if (Array.isArray(cards)) flashcards.push(...cards);
+        return JSON.parse(cleaned);
       }
     } catch (err) {
-      console.error('❌ Error generating flashcards:', err);
+      console.error(`Chunk ${i} failed:`, err);
+      return [];
     }
-  }
+  });
+  
+  const results = await Promise.all(tasks);
+  const flashcards = results.flat().slice(0, number);
+  
 
   return flashcards.slice(0, number);
 }

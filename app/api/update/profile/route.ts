@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+import {supabase} from "../../../../lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,10 +12,10 @@ export async function POST(request: NextRequest) {
 
     const updateFields: Record<string, any> = {};
 
-    if (quizzes !== undefined) updateFields.quizzes = quizzes;
-    if (cheatsheets !== undefined) updateFields.cheatsheets = cheatsheets;
-    if (studies !== undefined) updateFields.studies = studies;
-    if (flashcards !== undefined) updateFields.flashcards = flashcards;
+    if (quizzes !== undefined) updateFields.quizzes =parseInt( quizzes);
+    if (cheatsheets !== undefined) updateFields.cheatsheets =parseInt( cheatsheets);
+    if (studies !== undefined) updateFields.studies =parseInt( studies);
+    if (flashcards !== undefined) updateFields.flashcards =parseInt( flashcards);
 
     const { data, error } = await supabase
       .from('profiles')
