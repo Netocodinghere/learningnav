@@ -1,10 +1,63 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaPlus, FaRobot } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
 import Flashcard from '../../_components/FlashCard';
+import { useParams } from 'next/navigation';
 export default function StudyPage() {
   const [studyHours, setStudyHours] = useState(2.5);
+  const [study,setStudy]=useState(null)
+  const [user,setUser]=useState(null)
+  const [metrics,setMetrics]=useState(null)
+  const [accessToken,setAccessToken]=useState(null)
+  const {id}=useParams()
+
+  useEffect(()=>{
+    
+    const fetchUser = async () => {
+
+      const { data: { session } } = await supabase.auth.getSession()
+
+      setUser(session?.user || null)
+      setAccessToken(session?.access_token || null)
+     
+      if(session?.user){
+
+        const metrics= await fetch("/api/get/profile",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            user_id:session?.user?.id
+          })
+        })
+        const res= await metrics.json()
+        setMetrics(res.data || null)
+
+        const study= await fetch("/api/get/study",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            user_id:session?.user?.id,
+            study_id:id
+          })
+        })
+        const studyRes= await study.json()
+
+        setStudy(studyRes.data)
+
+ 
+        
+      }
+    }
+    fetchUser()
+  },[])
+ 
+ 
+
   const flashcards = [
     {
       question: 'What is React?',
@@ -36,8 +89,8 @@ export default function StudyPage() {
         <section>
           <h2 className="text-xl font-semibold mb-4">Flashcards</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {flashcards.map((card, index) => (
-              <Flashcard key={index} question={card.question} answer={card.answer} />
+            {study.flashcards.map((card, index) => (
+              <Flashcard key={index} question={card.front} answer={card.back} />
             ))}
           </div>
         </section>
@@ -62,10 +115,7 @@ export default function StudyPage() {
           <div className="bg-white/5 p-4 rounded-lg">
             <h3 className="font-semibold text-lg mb-2">📄 Cheatsheet</h3>
             <ul className="list-disc list-inside text-sm text-gray-200 space-y-1">
-              <li>useState is for state management</li>
-              <li>JSX needs one parent element</li>
-              <li>Props are read-only</li>
-              <li>Component names must be PascalCase</li>
+              <li>Nothing Here Yet</li>
             </ul>
           </div>
 
