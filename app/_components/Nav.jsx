@@ -29,7 +29,7 @@ const Nav = () => {
 
   return (
     <div className="w-full items-center flex justify-center ">
-      <div className="flex fixed z-20 top-0 justify-between lg:w-3/4 w-[95%] rounded-full my-4 p-6 backdrop-xl blur-xl backblur-xl lg:bg-black/30 bg-black/60 items-center">
+      <div className="flex fixed z-20 top-0 justify-between lg:w-3/4 w-[95%] rounded-full my-4 p-6 backdrop-xl  backblur-xl lg:bg-black/30 bg-black/60 items-center">
         <a href="/">
           <span className="font-extrabold text-3xl self-center inline-flex items-center justify-center text-gray-50 lg:text-3xl"> 
             <img src="/oip.png" alt="Pencil Holder" className="lg:size-16 size-16 bg-white rounded-full mr-1" />
