@@ -35,8 +35,8 @@ function ActionButton({ title, description, icon, onClick, primary = false }) {
     <button
       onClick={onClick}
       className={`group relative overflow-hidden p-6 rounded-2xl text-left transition-all duration-300 w-full border ${primary
-          ? 'bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 border-blue-500/30 shadow-lg hover:shadow-xl'
-          : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
+        ? 'bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 border-blue-500/30 shadow-lg hover:shadow-xl'
+        : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20'
         } backdrop-blur-sm`}
     >
       <div className="relative z-10">
@@ -97,20 +97,20 @@ export default function Dashboard({ profile }) {
   const [showStudyList, setShowStudyList] = useState(false);
 
   return (
-    <div className="min-h-screen  w-full p-6 pt-2 bg-transparent">
-      <div className="max-w-full mx-auto space-y-8">
+    <div className="min-h-screen w-full px-3 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 bg-transparent">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Welcome Section */}
-        <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1 sm:mb-2">
                 Welcome back! 👋
               </h1>
-              <p className="text-gray-300">Ready to continue your learning journey?</p>
+              <p className="text-sm sm:text-base text-gray-300">Ready to continue your learning journey?</p>
             </div>
-            <div className="hidden md:block">
-              <div className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center">
-                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="hidden sm:block flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                 </svg>
               </div>
@@ -119,7 +119,7 @@ export default function Dashboard({ profile }) {
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
           {metrics.map((metric) => (
             <MetricCard
               key={metric.title}
@@ -133,13 +133,13 @@ export default function Dashboard({ profile }) {
         </div>
 
         {/* Quick Actions Section */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white">Quick Actions</h2>
-            <span className="text-sm text-gray-400">Choose what you'd like to do next</span>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Quick Actions</h2>
+            <span className="text-xs sm:text-sm text-gray-400 hidden sm:block">Choose what you'd like to do next</span>
           </div>
 
-          <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <ActionButton
               title="Create New Study"
               description="Start a new study session with AI-powered assistance"
@@ -163,18 +163,18 @@ export default function Dashboard({ profile }) {
         </div>
 
         {/* Recent Studies Section */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white">Recent Studies</h2>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Recent Studies</h2>
             <button
               onClick={() => setShowStudyList(!showStudyList)}
-              className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-medium"
+              className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-medium self-start sm:self-auto"
             >
               {showStudyList ? 'Hide' : 'View All'}
             </button>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
             <StudyList />
           </div>
         </div>
