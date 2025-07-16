@@ -98,8 +98,8 @@ export default function Dashboard({profile}) {
   const [showStudyList, setShowStudyList] = useState(false);
 
   return (
-    <div className="min-h-screen p-6 pt-2 bg-transparent">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen  w-full p-6 pt-2 bg-transparent">
+      <div className="max-w-full mx-auto space-y-8">
         {/* Welcome Section */}
         <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl">
           <div className="flex items-center justify-between">
@@ -140,7 +140,7 @@ export default function Dashboard({profile}) {
             <span className="text-sm text-gray-400">Choose what you'd like to do next</span>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-6">
             <ActionButton
               title="Create New Study"
               description="Start a new study session with AI-powered assistance"

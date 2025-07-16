@@ -23,7 +23,9 @@ export default function RootLayout({ children }) {
         className={`bg-black bg-gradient-to-br from-blue-900 via-black to-cyan-900 grid `}
       >
         <Nav />
+        <div classname="pt-36">
         {children}
+        </div>
       </body>
     </html>
   );
