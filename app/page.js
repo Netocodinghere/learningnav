@@ -10,6 +10,7 @@ export default function Home() {
   const [pageLoading,setPageLoading]=useState(true)
   const [user,setUser]=useState(null)
   const [metrics,setMetrics]=useState(null)
+  const [studies, setStudies]=useState(null)
   useEffect(()=>{
     
     const fetchUser = async () => {
@@ -32,6 +33,8 @@ export default function Home() {
         })
         const res= await metrics.json()
         setMetrics(res.data || null)
+
+        
         
       }
        setPageLoading(false)
