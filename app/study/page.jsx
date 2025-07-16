@@ -74,14 +74,14 @@ function StudyModal({
             type="file"
             onChange={e => {
               setFile(e.target.files[0]);
-              
+
             }}
             className="w-full px-4 py-2 border border-gray-300 rounded-md mb-3 focus:ring-blue-500 focus:border-blue-500"
             accept=".pdf,.doc,.docx,.txt"
           />
           {file && (
             <button
-              onClick={(e) => onFileUpload(e,file)}
+              onClick={(e) => onFileUpload(e, file)}
               className="w-full bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition-colors"
             >
               Create Study from Notes
@@ -101,57 +101,57 @@ export default function StudyPage() {
   const [numberOfFlashcards, setNumberOfFlashcards] = useState(10);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
-  const [user,setUser]=useState(null)
-  const [metrics,setMetrics]=useState(null)
-  const [accessToken,setAccessToken]=useState(null)
-  useEffect(()=>{
-    
+  const [user, setUser] = useState(null)
+  const [metrics, setMetrics] = useState(null)
+  const [accessToken, setAccessToken] = useState(null)
+  useEffect(() => {
+
     const fetchUser = async () => {
 
       const { data: { session } } = await supabase.auth.getSession()
 
       setUser(session?.user || null)
       setAccessToken(session?.access_token || null)
-     
-      if(session?.user){
 
-        const metrics= await fetch("/api/get/profile",{
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
+      if (session?.user) {
+
+        const metrics = await fetch("/api/get/profile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
           },
-          body:JSON.stringify({
-            user_id:session?.user?.id
+          body: JSON.stringify({
+            user_id: session?.user?.id
           })
         })
-        const res= await metrics.json()
+        const res = await metrics.json()
         setMetrics(res.data || null)
-        
+
       }
     }
     fetchUser()
-  },[])
- 
+  }, [])
+
   const handleVideoSubmit = (e) => {
     e.preventDefault();
     console.log('Processing video:', videoUrl);
     setModalOpen(false);
   };
- 
-  const handleFileUpload = async (e,file) => {
+
+  const handleFileUpload = async (e, file) => {
     e.preventDefault();
     setIsGenerating(true);
     setError('');
 
-    
+
     const formData = new FormData();
     if (!file) {
-        setError("Please upload a file.");
-        setIsGenerating(false);
-        return;
-      }
-      formData.append('file', file);
-      formData.append('number', numberOfFlashcards);
+      setError("Please upload a file.");
+      setIsGenerating(false);
+      return;
+    }
+    formData.append('file', file);
+    formData.append('number', numberOfFlashcards);
 
     try {
       const res = await fetch('/api/new/flashcards', {
@@ -166,41 +166,41 @@ export default function StudyPage() {
 
       const data = await res.json();
 
-      try{
-        const newForm=new FormData();
-        newForm.append('file',file);
-        newForm.append('title',data.title);
-        newForm.append('flashcards',JSON.stringify(data.flashcards));
-        newForm.append('user_id',user.id);
-        newForm.append('access_token',accessToken);
+      try {
+        const newForm = new FormData();
+        newForm.append('file', file);
+        newForm.append('title', data.title);
+        newForm.append('flashcards', JSON.stringify(data.flashcards));
+        newForm.append('user_id', user.id);
+        newForm.append('access_token', accessToken);
         const rus = await fetch('/api/new/study', {
           method: 'POST',
           body: newForm,
         });
 
         const data_study = await rus.json();
-        if(data_study.study){
-          const updateUser=await fetch('/api/update/profile',{
-            method:'POST',
-            headers:{
-              "Content-Type":"application/json"
+        if (data_study.study) {
+          const updateUser = await fetch('/api/update/profile', {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json"
             },
-            body:JSON.stringify({
+            body: JSON.stringify({
               user_id: user?.id,
-              flashcards:metrics?.flashcards+data.totalFlashcards,
-              studies:metrics?.studies+1
+              flashcards: metrics?.flashcards + data.totalFlashcards,
+              studies: metrics?.studies + 1
             })
           })
 
-          if(window !="undefined"){
-            window.location.href="/study/"+data_study.study.id;
+          if (window != "undefined") {
+            window.location.href = "/study/" + data_study.study.id;
+          }
         }
-      }
 
-      }catch(err){
+      } catch (err) {
         console.log(err);
       }
-      
+
     } catch (error) {
       console.error("Error generating quiz:", error);
       setError(error.message || "Something went wrong while generating the quiz.");

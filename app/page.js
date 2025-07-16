@@ -42,7 +42,7 @@ export default function Home() {
     fetchUser()
   },[])
   return (
-   <div className="bg-transparent">
+   <div className="w-full bg-transparent">
 
     {pageLoading? <div className="h-screen flex items-center justify-center w-full "> <FullScreenLoader message="Wait A Moment" type="ripple" /> </div>: auth? <Dashboard profile={metrics}/>:<Hero/>}
    </div>
