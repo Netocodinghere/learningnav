@@ -98,7 +98,7 @@ export default function Dashboard({profile}) {
   const [showStudyList, setShowStudyList] = useState(false);
 
   return (
-    <div className="min-h-screen p-6 pt-24 bg-transparent">
+    <div className="min-h-screen p-6 pt-2 bg-transparent">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Welcome Section */}
         <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl">

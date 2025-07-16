@@ -137,7 +137,7 @@ export default function NewQuiz() {
   }
 
   return (
-    <div className="min-h-screen p-6 pt-24 bg-transparent">
+    <div className="min-h-screen p-6  bg-transparent">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header Section */}
         <div className="text-center space-y-4">

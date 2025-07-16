@@ -104,7 +104,7 @@ const SignIn = () => {
   };
 
   return (
-  <div className="min-h-screen bg-gradient-to-br from-blue-900 via-black to-cyan-900 flex items-center justify-center px-4 pt-20">
+  <div className="min-h-screen bg-gradient-to-br from-blue-900 via-black to-cyan-900 flex items-center justify-center px-4 ">
   <div className="w-full max-w-md bg-black/80 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col items-center border border-white/20 mx-auto">
   
   <h1 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-3 drop-shadow">
