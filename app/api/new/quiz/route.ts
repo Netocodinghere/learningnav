@@ -145,7 +145,7 @@ async function loadAndChunk(filePath: string, fileType: string) {
 
 function chunkText(text: string) {
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 500,
+    chunkSize: 3000,
     chunkOverlap: 50,
   });
 

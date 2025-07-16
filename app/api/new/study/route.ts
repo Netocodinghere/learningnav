@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         else loader = new TextLoader(tempPath);
     
         const docs = await loader.load();
-        const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 512, chunkOverlap: 32 });
+        const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 3512, chunkOverlap: 32 });
         const splitDocs = await splitter.splitDocuments(docs);
     
         const resultPairs = await Promise.all(splitDocs.map(async d => {

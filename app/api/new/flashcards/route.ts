@@ -61,7 +61,7 @@ async function loadAndChunk(filePath: string, fileType: string) {
     default: throw new Error('Unsupported file format');
   }
   const docs = await loader.load();
-  const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 500, chunkOverlap: 50 });
+  const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 3000, chunkOverlap: 50 });
   return await splitter.splitDocuments(docs);
 }
 function shuffleArray<T>(array: T[]): T[] {
