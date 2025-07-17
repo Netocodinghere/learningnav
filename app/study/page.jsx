@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import StudyList from '../_components/StudyList';
 import { supabase } from '../../lib/auth';
+import  FullScreenLoader  from '../_components/Loader';
 function StudyModal({
   open,
   onClose,
@@ -104,10 +105,12 @@ export default function StudyPage() {
   const [user, setUser] = useState(null)
   const [metrics, setMetrics] = useState(null)
   const [accessToken, setAccessToken] = useState(null)
+  const [pageLoading, setPageLoading]=useState(true)
+
   useEffect(() => {
 
     const fetchUser = async () => {
-
+      console.log("working...")
       const { data: { session } } = await supabase.auth.getSession()
 
       setUser(session?.user || null)
@@ -126,6 +129,7 @@ export default function StudyPage() {
         })
         const res = await metrics.json()
         setMetrics(res.data || null)
+        setPageLoading(false)
 
       }
     }
@@ -213,6 +217,10 @@ export default function StudyPage() {
 
   return (
     <div className="pt-32 overflow-y-auto mx-auto px-6 min-h-screen w-full  ">
+      
+      {
+        pageLoading? <FullScreenLoader type="ripple" /> : (
+     <div>
       <div className="flex justify-between items-center w-full mb-8">
         <h1 className="lg:text-3xl text-white text-2xl font-bold">Study Dashboard</h1>
         <button
@@ -226,7 +234,7 @@ export default function StudyPage() {
       {/* Previous Studies List */}
       <div className="bg-black text-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4">Previous Studies</h2>
-        <StudyList />
+        <StudyList user_id={user?.id} />
       </div>
 
       <StudyModal
@@ -240,6 +248,13 @@ export default function StudyPage() {
         file={file}
         setFile={setFile}
       />
+
+     </div>      
+        )
+
+      }
+      
+      
     </div>
   );
 }
