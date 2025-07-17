@@ -53,7 +53,7 @@ function ActionButton({ title, description, icon, onClick, primary = false }) {
   );
 }
 
-export default function Dashboard({ profile }) {
+export default function Dashboard({ profile,user_id }) {
   const userData = {
     metrics: {
       studiesCreated: profile?.studies || 0,
@@ -175,7 +175,7 @@ export default function Dashboard({ profile }) {
           </div>
 
           <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
-            <StudyList />
+            <StudyList user_id={user_id}/>
           </div>
         </div>
       </div>
